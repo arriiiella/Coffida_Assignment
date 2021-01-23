@@ -129,7 +129,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.myproject"
+        applicationId "com.coffida_assignment"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

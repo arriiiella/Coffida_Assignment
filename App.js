@@ -1,14 +1,22 @@
-import React, { Component } from 'react';
-import { Text, View } from 'react-native';
+import React, {Component} from 'react';
+import {Text, View} from 'react-native';
 
-import ToDo from './components/ToDo';
+class SayHello extends Component {
+  render() {
+    return (
+      <View>
+        <Text>Hello {this.props.name}</Text>
+      </View>
+    );
+  }
+}
 
 class HelloWorldApp extends Component {
-  render(){
+  render() {
     return (
-        <View>
-          <ToDo />
-        </View>
+      <View>
+        <SayHello name="Ariella" />
+      </View>
     );
   }
 }

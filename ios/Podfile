@@ -3,12 +3,12 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 
 platform :ios, '10.0'
 
-target 'myProject' do
+target 'coffida_assignment' do
   config = use_native_modules!
 
   use_react_native!(:path => config["reactNativePath"])
 
-  target 'myProjectTests' do
+  target 'coffida_assignmentTests' do
     inherit! :complete
     # Pods for testing
   end
@@ -23,10 +23,10 @@ target 'myProject' do
   end
 end
 
-target 'myProject-tvOS' do
-  # Pods for myProject-tvOS
+target 'coffida_assignment-tvOS' do
+  # Pods for coffida_assignment-tvOS
 
-  target 'myProject-tvOSTests' do
+  target 'coffida_assignment-tvOSTests' do
     inherit! :search_paths
     # Pods for testing
   end
