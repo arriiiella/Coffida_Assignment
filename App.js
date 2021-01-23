@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Text, View} from 'react-native';
+import {Provider as PaperProvider} from 'react-native-paper';
 
 class SayHello extends Component {
   render() {
@@ -14,9 +15,11 @@ class SayHello extends Component {
 class HelloWorldApp extends Component {
   render() {
     return (
-      <View>
-        <SayHello name="Ariella" />
-      </View>
+      <PaperProvider>
+        <View>
+          <SayHello name="Ariella" />
+        </View>
+      </PaperProvider>
     );
   }
 }
