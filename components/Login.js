@@ -1,5 +1,29 @@
 import React, { Component } from 'react';
-import { Text, TextInput, View } from "react-native-paper";
+import { TextInput, Button  } from "react-native-paper";
+import { View, Text, StyleSheet } from 'react-native'
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+    justifyContent: "center",
+  },
+
+  title: {
+    paddingVertical: 8,
+    textAlign: "center",
+    fontSize: 30,
+    fontWeight: "bold"
+  },
+
+  formField: {
+    marginBottom: 8
+  },
+
+  buttonContainer: {
+    marginTop: 8,
+  },
+});
 
 class Login extends Component {
   constructor(props) {
@@ -11,8 +35,7 @@ class Login extends Component {
     };
   }
 
-  /* eslint-disable-line null */
-  handleEmailInput = (email) => {
+  handleEmailInput = (email) => { 
     this.setState({ email: email });
   };
 
@@ -21,22 +44,25 @@ class Login extends Component {
   };
 
   render() {
+    const { email, password} = this.state;
+
     return (
-      <View>
-        <Text>Login</Text>
-        <TextInput
-          placeholder="email..."
+      <View style={styles.container}>
+        <Text style={styles.title}>Login</Text>
+        <TextInput style={styles.formField}
+          label="Email"
           onChangeText={this.handleEmailInput}
           value={this.state.email}
         />
-        <TextInput
-          placeholder="password..."
+        <TextInput style={styles.formField}
+          label="Password"
           onChangeText={this.handlePasswordInput}
           value={this.state.password}
         />
+        <Button  mode="contained"> Login </Button>
       </View>
     );
   }
 }
 
-export default Login;
+export default Login

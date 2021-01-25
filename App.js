@@ -1,41 +1,48 @@
 import React, { Component } from 'react'
-import { Appbar, Provider as PaperProvider } from 'react-native-paper'
+import { Provider as PaperProvider, Appbar, DefaultTheme } from 'react-native-paper'
 import { StyleSheet } from 'react-native'
 
+import Login from './components/Login'
+import SignUp from './components/SignUp'
+
 const styles = StyleSheet.create({
-  bottom: {
+  banner: {
     position: 'absolute',
     left: 0,
     right: 0,
-    bottom: 0
+    top: 0,
+    width: 800
+  },
+
+  bannerContent: {
+    width: 800,
+    margin: 0,
+    padding: 10
   }
 })
 
-class HelloWorldApp extends Component {
+const theme = {
+  ...DefaultTheme,
+  roundness: 2,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: '#7a1f1f',
+    accent: '#F8F8F8'
+  }
+}
+
+class App extends Component {
   render () {
     return (
-      <PaperProvider>
-        <Appbar style={styles.bottom}>
-          <Appbar.Action
-            icon='archive'
-            onPress={() => console.log('Pressed archive')}
-          />
-          <Appbar.Action
-            icon='mail'
-            onPress={() => console.log('Pressed mail')}
-          />
-          <Appbar.Action
-            icon='label'
-            onPress={() => console.log('Pressed label')}
-          />
-          <Appbar.Action
-            icon='delete'
-            onPress={() => console.log('Pressed delete')}
-          />
-        </Appbar>
+      <PaperProvider theme={theme}>
+        <Appbar.Header style={styles.banner}>
+          <Appbar.Content color='white' title='Coffida' />
+          <Appbar.Action icon='magnify' onPress={() => {}} />
+        </Appbar.Header>
+        <SignUp />
       </PaperProvider>
     )
   }
 }
 
-export default HelloWorldApp
+export default App
