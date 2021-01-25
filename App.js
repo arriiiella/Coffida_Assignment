@@ -1,24 +1,39 @@
 import React, {Component} from 'react';
-import {Text, View} from 'react-native';
+import {Appbar} from 'react-native-paper';
+import {StyleSheet} from 'react-native';
 import {Provider as PaperProvider} from 'react-native-paper';
 
-class SayHello extends Component {
-  render() {
-    return (
-      <View>
-        <Text>Hello {this.props.name}</Text>
-      </View>
-    );
-  }
-}
+const styles = StyleSheet.create({
+  bottom: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+});
 
 class HelloWorldApp extends Component {
   render() {
     return (
       <PaperProvider>
-        <View>
-          <SayHello name="Ariella" />
-        </View>
+        <Appbar style={styles.bottom}>
+          <Appbar.Action
+            icon="archive"
+            onPress={() => console.log('Pressed archive')}
+          />
+          <Appbar.Action
+            icon="mail"
+            onPress={() => console.log('Pressed mail')}
+          />
+          <Appbar.Action
+            icon="label"
+            onPress={() => console.log('Pressed label')}
+          />
+          <Appbar.Action
+            icon="delete"
+            onPress={() => console.log('Pressed delete')}
+          />
+        </Appbar>
       </PaperProvider>
     );
   }
