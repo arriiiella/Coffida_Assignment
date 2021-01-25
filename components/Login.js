@@ -1,22 +1,23 @@
-import React, {Component} from 'react';
-import {Text, TextInput, View} from 'react-native-paper';
+import React, { Component } from 'react';
+import { Text, TextInput, View } from "react-native-paper";
 
 class Login extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     };
   }
 
+  /* eslint-disable-line null */
   handleEmailInput = (email) => {
-    this.setState({email: email});
+    this.setState({ email: email });
   };
 
   handlePasswordInput = (password) => {
-    this.setState({password: password});
+    this.setState({ password: password });
   };
 
   render() {
