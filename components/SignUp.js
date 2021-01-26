@@ -1,6 +1,87 @@
+/* eslint-disable */
 import React, {Component} from 'react';
-import {TextInput, HelperText, Button} from 'react-native-paper';
-import {View, Text, StyleSheet} from 'react-native';
+import {TextInput, Button} from 'react-native-paper';
+import {View, Text, StyleSheet, Alert} from 'react-native';
+
+class SignUp extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      first_name: '',
+      last_name: '',
+      email: '',
+      password: '',
+    };
+  }
+
+  addUser() {
+    const to_send = {
+      first_name: this.state.first_name,
+      last_name: this.state.last_name,
+      email: this.state.email,
+      password: this.state.password,
+    };
+
+    return fetch('http://10.0.2.2:3333/api/1.0.0/user', {
+      method: 'post',
+      headers: {
+        'COntent-Type': 'application/json',
+      },
+      body: JSON.stringify(to_send),
+    })
+      .then((response) => {
+        Alert.alert('Sign Up Complete!!');
+        this.getData();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>Sign Up</Text>
+        <TextInput
+          mode="outlined"
+          label="First Name..."
+          onChangeText={(first_name) => this.setState({first_name})}
+          value={this.state.first_name}
+        />
+        <TextInput
+          mode="outlined"
+          label="Last Name..."
+          onChangeText={(last_name) => this.setState({last_name})}
+          value={this.state.lastName}
+        />
+        <TextInput
+          mode="outlined"
+          label="Email..."
+          onChangeText={(email) => this.setState({email})}
+          value={this.state.email}
+        />
+        <TextInput
+          mode="outlined"
+          label="Password..."
+          onChangeText={(password) => this.setState({password})}
+          value={this.state.password}
+        />
+        <Button
+          style={styles.buttonContainer}
+          mode="contained"
+          accessibilityLabel="Sign Up"
+          onPress={() => this.addUser()}>
+          Sign Up
+        </Button>
+        <Text style={styles.signUp}>Already have an account? </Text>
+        <Button mode="text" accessibilityLabel="Login">
+          Login
+        </Button>
+      </View>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -33,83 +114,5 @@ const styles = StyleSheet.create({
     display: 'flex',
   },
 });
-
-class SignUp extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      firstName: '',
-      lastName: '',
-      email: '',
-      pass: '',
-      passConfirm: '',
-    };
-  }
-
-  handleFirstNameInput = (firstName) => {
-    this.setState({email: email});
-  };
-
-  handleLastNameInput = (lastName) => {
-    this.setState({password: password});
-  };
-
-  handleEmailInput = (email) => {
-    this.setState({email: email});
-  };
-
-  handlePasswordInput = (pass) => {
-    this.setState({pass: pass});
-  };
-
-  render() {
-    const {firstName, lastName, email, pass, passConfirm} = this.state;
-
-    const emailValidate = () => {
-      return !this.state.email.includes('@');
-    };
-
-    return (
-      <View style={styles.container}>
-        <Text style={styles.title}>Sign Up</Text>
-        <TextInput
-          mode="outlined"
-          label="First Name..."
-          onChangeText={this.handleFirstNameInput}
-          value={this.state.firstName}
-        />
-        <TextInput
-          mode="outlined"
-          label="Last Name..."
-          onChangeText={this.handleLastNameInput}
-          value={this.state.password}
-        />
-        <TextInput
-          mode="outlined"
-          label="Email..."
-          onChangeText={this.handleEmailInput}
-          value={this.state.email}
-        />
-        <TextInput
-          mode="outlined"
-          label="Password..."
-          onChangeText={this.handlePasswordInput}
-          value={this.state.pass}
-        />
-        <Button
-          style={styles.buttonContainer}
-          mode="contained"
-          accessibilityLabel="Sign Up">
-          Sign Up
-        </Button>
-        <Text style={styles.signUp}>Already have an account? </Text>
-        <Button mode="text" accessibilityLabel="Login">
-          Login
-        </Button>
-      </View>
-    );
-  }
-}
 
 export default SignUp;
