@@ -26,7 +26,7 @@ class SignUp extends Component {
     return fetch('http://10.0.2.2:3333/api/1.0.0/user', {
       method: 'post',
       headers: {
-        'COntent-Type': 'application/json',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(to_send),
     })
