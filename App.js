@@ -1,5 +1,9 @@
 import React, { Component } from 'react'
-import { Provider as PaperProvider, Appbar, DefaultTheme } from 'react-native-paper'
+import {
+  Provider as PaperProvider,
+  Appbar,
+  DefaultTheme
+} from 'react-native-paper'
 import { StyleSheet } from 'react-native'
 
 import Login from './components/Login'
@@ -36,8 +40,11 @@ class App extends Component {
     return (
       <PaperProvider theme={theme}>
         <Appbar.Header style={styles.banner}>
-          <Appbar.Content color='white' title='Coffida' />
-          <Appbar.Action icon='magnify' onPress={() => {}} />
+          <Appbar.Action icon='coffee-outline' />
+          <Appbar.Content
+            title='Coffida'
+            subtitle='Rate your local coffee shops!'
+          />
         </Appbar.Header>
         <SignUp />
       </PaperProvider>
