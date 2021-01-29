@@ -1,29 +1,11 @@
+import 'react-native-gesture-handler'
 import React, { Component } from 'react'
-import {
-  Provider as PaperProvider,
-  Appbar,
-  DefaultTheme
-} from 'react-native-paper'
-import { StyleSheet } from 'react-native'
-
-import Login from './components/Login'
-import SignUp from './components/SignUp'
-
-const styles = StyleSheet.create({
-  banner: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    width: 800
-  },
-
-  bannerContent: {
-    width: 800,
-    margin: 0,
-    padding: 10
-  }
-})
+import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper'
+import { NavigationContainer } from '@react-navigation/native'
+import { createStackNavigator } from '@react-navigation/stack'
+import LoginScreen from './components/Login'
+import SignUpScreen from './components/SignUp'
+import AppBar from './components/AppBar'
 
 const theme = {
   ...DefaultTheme,
@@ -35,18 +17,19 @@ const theme = {
   }
 }
 
+const Stack = createStackNavigator()
+
 class App extends Component {
   render () {
     return (
       <PaperProvider theme={theme}>
-        <Appbar.Header style={styles.banner}>
-          <Appbar.Action icon='coffee-outline' />
-          <Appbar.Content
-            title='Coffida'
-            subtitle='Rate your local coffee shops!'
-          />
-        </Appbar.Header>
-        <SignUp />
+        <AppBar />
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen name='Login' component={LoginScreen} />
+            <Stack.Screen name='SignUp' component={SignUpScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
       </PaperProvider>
     )
   }

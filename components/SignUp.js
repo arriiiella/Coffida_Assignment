@@ -2,6 +2,7 @@
 import React, {Component} from 'react';
 import {TextInput, Button} from 'react-native-paper';
 import {View, Text, StyleSheet, Alert} from 'react-native';
+import AppBar from './AppBar';
 
 class SignUp extends Component {
   constructor(props) {
@@ -40,6 +41,8 @@ class SignUp extends Component {
   }
 
   render() {
+    const navigation = this.props.navigation;
+
     return (
       <View style={styles.container}>
         <Text style={styles.title}>Sign Up</Text>
@@ -75,7 +78,10 @@ class SignUp extends Component {
           Sign Up
         </Button>
         <Text style={styles.signUp}>Already have an account? </Text>
-        <Button mode="text" accessibilityLabel="Login">
+        <Button
+          mode="text"
+          accessibilityLabel="Login"
+          onPress={() => navigation.navigate('Login')}>
           Login
         </Button>
       </View>
