@@ -22,7 +22,6 @@ class AppBar extends Component {
   render () {
     return (
       <Appbar.Header style={styles.banner}>
-        <Appbar.BackAction onPress={() => {}} />
         <Appbar.Action icon='coffee-outline' />
         <Appbar.Content
           title='Coffida'

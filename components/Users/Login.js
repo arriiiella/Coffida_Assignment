@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import {TextInput, Button, Appbar, DefaultTheme} from 'react-native-paper';
-import {View, Text, StyleSheet} from 'react-native';
+import {ScrollView, Text, StyleSheet} from 'react-native';
 import AppBar from './AppBar';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class Login extends Component {
   constructor(props) {
@@ -21,6 +22,33 @@ class Login extends Component {
     this.setState({password: password});
   };
 
+  login = async () => {
+    return fetch('http://10.0.2.2:3333/api/1.0.0/user/login', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(this.state),
+    })
+      .then((response) => {
+        if (response.status === 200) {
+          return response.json();
+        } else if (response.status === 400) {
+          throw 'Invalid email or password';
+        } else {
+          throw 'Something went wrong';
+        }
+      })
+      .then(async (responseJson) => {
+        console.log(responseJson);
+        await AsyncStorage.setItem('@session_token', responseJson.token);
+        this.props.navigation.navigate('Home');
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   render() {
     const {email, password} = this.state;
 
@@ -31,7 +59,9 @@ class Login extends Component {
     };
 
     return (
-      <View style={styles.container}>
+      <ScrollView
+        contentContainerStyle={{flex: 1, justifyContent: 'center'}}
+        style={styles.container}>
         <Text style={styles.title}>Login</Text>
         <TextInput
           style={styles.formField}
@@ -44,30 +74,29 @@ class Login extends Component {
           label="Password"
           onChangeText={this.handlePasswordInput}
           value={this.state.password}
+          secureTextEntry={true}
         />
         <Button
           style={styles.buttonContainer}
           mode="contained"
-          accessibilityLabel="Login">
+          accessibilityLabel="Login"
+          onPress={() => this.login()}>
           Login
         </Button>
-        <Text style={styles.signUp}> Don't have an account?</Text>
         <Button
           mode="text"
           accessibilityLabel="Sign Up"
           onPress={() => navigation.navigate('SignUp')}>
-          Sign up
+          Don't have an account? Sign up
         </Button>
-      </View>
+      </ScrollView>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: 16,
-    justifyContent: 'center',
     marginLeft: 16,
     marginRight: 16,
   },
@@ -95,13 +124,6 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginLeft: 120,
     marginRight: 120,
-  },
-
-  signUp: {
-    fontSize: 16,
-    marginTop: 16,
-    marginLeft: 16,
-    display: 'flex',
   },
 });
 

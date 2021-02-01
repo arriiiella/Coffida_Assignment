@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React, {Component} from 'react';
 import {TextInput, Button} from 'react-native-paper';
-import {View, Text, StyleSheet, Alert} from 'react-native';
+import {ScrollView, Text, StyleSheet, Alert, ToastAndroid} from 'react-native';
 import AppBar from './AppBar';
 
 class SignUp extends Component {
@@ -13,6 +13,7 @@ class SignUp extends Component {
       last_name: '',
       email: '',
       password: '',
+      confirm_password: '',
     };
   }
 
@@ -32,8 +33,18 @@ class SignUp extends Component {
       body: JSON.stringify(to_send),
     })
       .then((response) => {
-        Alert.alert('Sign Up Complete!!');
+        if (response.status === 201) {
+          return response.json();
+        } else if (response.status === 400) {
+          throw 'Failed Validation';
+        } else {
+          throw 'Something went wrong';
+        }
         this.getData();
+      })
+      .then((responseJson) => {
+        console.log('User created with ID: ', responseJson);
+        this.props.navigation.navigate('Login');
       })
       .catch((error) => {
         console.log(error);
@@ -44,7 +55,9 @@ class SignUp extends Component {
     const navigation = this.props.navigation;
 
     return (
-      <View style={styles.container}>
+      <ScrollView
+        contentContainerStyle={{flex: 1, justifyContent: 'center'}}
+        style={styles.container}>
         <Text style={styles.title}>Sign Up</Text>
         <TextInput
           mode="outlined"
@@ -70,6 +83,12 @@ class SignUp extends Component {
           onChangeText={(password) => this.setState({password})}
           value={this.state.password}
         />
+        <TextInput
+          mode="outlined"
+          label="Confirm Password..."
+          onChangeText={(confirm_password) => this.setState({confirm_password})}
+          value={this.state.confirm_password}
+        />
         <Button
           style={styles.buttonContainer}
           mode="contained"
@@ -77,23 +96,20 @@ class SignUp extends Component {
           onPress={() => this.addUser()}>
           Sign Up
         </Button>
-        <Text style={styles.signUp}>Already have an account? </Text>
         <Button
           mode="text"
           accessibilityLabel="Login"
           onPress={() => navigation.navigate('Login')}>
-          Login
+          Already have an account? Login
         </Button>
-      </View>
+      </ScrollView>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: 16,
-    justifyContent: 'center',
     marginBottom: 8,
     marginLeft: 16,
     marginRight: 16,

@@ -3,8 +3,9 @@ import React, { Component } from 'react'
 import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
-import LoginScreen from './components/Login'
-import SignUpScreen from './components/SignUp'
+import LoginScreen from './components/Users/Login'
+import SignUpScreen from './components/Users/SignUp'
+import HomeScreen from './components/Home'
 import AppBar from './components/AppBar'
 
 const theme = {
@@ -26,6 +27,7 @@ class App extends Component {
         <AppBar />
         <NavigationContainer>
           <Stack.Navigator>
+            <Stack.Screen name='Home' component={HomeScreen} />
             <Stack.Screen name='Login' component={LoginScreen} />
             <Stack.Screen name='SignUp' component={SignUpScreen} />
           </Stack.Navigator>
