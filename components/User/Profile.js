@@ -1,10 +1,9 @@
 import React, {Component} from 'react';
 import {TextInput, Button, Appbar, DefaultTheme} from 'react-native-paper';
 import {ScrollView, Text, StyleSheet} from 'react-native';
-import AppBar from './AppBar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-class Login extends Component {
+class Profile extends Component {
   constructor(props) {
     super(props);
 
@@ -14,39 +13,29 @@ class Login extends Component {
     };
   }
 
+  componentDidMount() {
+    this.unsubscribe = this.props.navigation.addListener('focus', () => {
+      this.loggedIn();
+    });
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe();
+  }
+
+  loggedIn = async () => {
+    const value = await AsyncStorage.getItem('@session_token');
+    if (value == null) {
+      this.props.navigation.navigate('Login');
+    }
+  };
+
   handleEmailInput = (email) => {
     this.setState({email: email});
   };
 
   handlePasswordInput = (password) => {
     this.setState({password: password});
-  };
-
-  login = async () => {
-    return fetch('http://10.0.2.2:3333/api/1.0.0/user/login', {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(this.state),
-    })
-      .then((response) => {
-        if (response.status === 200) {
-          return response.json();
-        } else if (response.status === 400) {
-          throw 'Invalid email or password';
-        } else {
-          throw 'Something went wrong';
-        }
-      })
-      .then(async (responseJson) => {
-        console.log(responseJson);
-        await AsyncStorage.setItem('@session_token', responseJson.token);
-        this.props.navigation.navigate('Home');
-      })
-      .catch((error) => {
-        console.log(error);
-      });
   };
 
   render() {
@@ -127,4 +116,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Login;
+export default Profile;

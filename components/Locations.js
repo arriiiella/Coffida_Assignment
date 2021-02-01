@@ -1,10 +1,18 @@
 import React, {Component} from 'react';
 import {ScrollView, Text, StyleSheet} from 'react-native';
-import {TextInput} from 'react-native-paper';
+import {TextInput, Searchbar} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import AppBar from './AppBar';
 
-class Home extends Component {
+class Locations extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      searchQuery: '',
+      setSearchQuery: '',
+    };
+  }
+
   componentDidMount() {
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
       this.loggedIn();
@@ -23,11 +31,13 @@ class Home extends Component {
   };
 
   render() {
+    const {searchQuery, setSearchQuery} = this.state;
+
     return (
       <ScrollView>
-        <Text>Home</Text>
+        <Searchbar placeholder="Search Locations..." value={searchQuery} />
       </ScrollView>
     );
   }
 }
-export default Home;
+export default Locations;

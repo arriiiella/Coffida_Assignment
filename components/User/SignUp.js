@@ -2,7 +2,6 @@
 import React, {Component} from 'react';
 import {TextInput, Button} from 'react-native-paper';
 import {ScrollView, Text, StyleSheet, Alert, ToastAndroid} from 'react-native';
-import AppBar from './AppBar';
 
 class SignUp extends Component {
   constructor(props) {
