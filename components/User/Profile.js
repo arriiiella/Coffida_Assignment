@@ -1,6 +1,12 @@
 import React, {Component} from 'react';
 import {TextInput, Button, Appbar, DefaultTheme} from 'react-native-paper';
-import {ScrollView, Text, StyleSheet} from 'react-native';
+import {
+  ScrollView,
+  Text,
+  StyleSheet,
+  ToastAndroid,
+  FlatList,
+} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class Profile extends Component {
@@ -8,8 +14,8 @@ class Profile extends Component {
     super(props);
 
     this.state = {
-      email: '',
-      password: '',
+      isLoading: true,
+      listData: [],
     };
   }
 
@@ -30,12 +36,27 @@ class Profile extends Component {
     }
   };
 
-  handleEmailInput = (email) => {
-    this.setState({email: email});
-  };
-
-  handlePasswordInput = (password) => {
-    this.setState({password: password});
+  getData = () => {
+    return fetch('http://10.0.2.2:3333/api/1.0.0/user/{usr_id}')
+      .then((response) => {
+        if (response.status === 200) {
+          return response.json();
+        } else if (response.status === 401) {
+          ToastAndroid.show("You're not logged in", ToastAndroid.SHORT);
+          this.props.navigation.navigate('Login');
+        } else {
+          throw 'Something went wrong';
+        }
+      })
+      .then((responseJson) => {
+        this.setState({
+          isLoading: false,
+          listData: responseJson,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   render() {
@@ -43,43 +64,29 @@ class Profile extends Component {
 
     const navigation = this.props.navigation;
 
-    const hasErrors = () => {
-      return !this.state.email.includes('@');
-    };
-
-    return (
-      <ScrollView
-        contentContainerStyle={{flex: 1, justifyContent: 'center'}}
-        style={styles.container}>
-        <Text style={styles.title}>Login</Text>
-        <TextInput
-          style={styles.formField}
-          label="Email"
-          onChangeText={this.handleEmailInput}
-          value={this.state.email}
-        />
-        <TextInput
-          style={styles.formField}
-          label="Password"
-          onChangeText={this.handlePasswordInput}
-          value={this.state.password}
-          secureTextEntry={true}
-        />
-        <Button
-          style={styles.buttonContainer}
-          mode="contained"
-          accessibilityLabel="Login"
-          onPress={() => this.login()}>
-          Login
-        </Button>
-        <Button
-          mode="text"
-          accessibilityLabel="Sign Up"
-          onPress={() => navigation.navigate('SignUp')}>
-          Don't have an account? Sign up
-        </Button>
-      </ScrollView>
-    );
+    if (this.state.isLoading) {
+      return (
+        <ScrollView
+          contentContainerStyle={{flex: 1, justifyContent: 'center'}}
+          style={styles.container}>
+          <Text style={styles.title}>Error!</Text>
+        </ScrollView>
+      );
+    } else {
+      return (
+        <ScrollView
+          contentContainerStyle={{flex: 1, justifyContent: 'center'}}
+          style={styles.container}>
+          <FlatList
+            data={this.state.listData}
+            renderItem={({item}) => (
+              <View>
+                <Text>{item.location_name}</Text>
+              </View>
+            )}></FlatList>
+        </ScrollView>
+      );
+    }
   }
 }
 
@@ -88,31 +95,6 @@ const styles = StyleSheet.create({
     padding: 16,
     marginLeft: 16,
     marginRight: 16,
-  },
-
-  title: {
-    paddingVertical: 8,
-    marginBottom: 8,
-    textAlign: 'center',
-    fontSize: 30,
-    fontWeight: 'bold',
-  },
-
-  formField: {
-    marginBottom: 8,
-  },
-
-  error: {
-    paddingTop: 0,
-    marginBottom: 16,
-    marginLeft: -8,
-    fontSize: 16,
-  },
-
-  buttonContainer: {
-    marginTop: 8,
-    marginLeft: 120,
-    marginRight: 120,
   },
 });
 
