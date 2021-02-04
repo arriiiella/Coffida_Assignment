@@ -1,12 +1,6 @@
 import React, {Component} from 'react';
-import {TextInput, Button, Appbar, DefaultTheme} from 'react-native-paper';
-import {
-  ScrollView,
-  Text,
-  StyleSheet,
-  ToastAndroid,
-  FlatList,
-} from 'react-native';
+import {TextInput, Button, Appbar, ActivityIndicator} from 'react-native-paper';
+import {View, Text, StyleSheet, ToastAndroid, FlatList} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class Profile extends Component {
@@ -23,6 +17,8 @@ class Profile extends Component {
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
       this.loggedIn();
     });
+
+    this.getData();
   }
 
   componentWillUnmount() {
@@ -30,14 +26,23 @@ class Profile extends Component {
   }
 
   loggedIn = async () => {
-    const value = await AsyncStorage.getItem('@session_token');
-    if (value == null) {
+    const token = await AsyncStorage.getItem('@session_token');
+    if (token == null) {
       this.props.navigation.navigate('Login');
     }
   };
 
-  getData = () => {
-    return fetch('http://10.0.2.2:3333/api/1.0.0/user/{usr_id}')
+  getData = async () => {
+    const id = await AsyncStorage.getItem('@id');
+    const user_id = parseInt(id);
+    const token = await AsyncStorage.getItem('@session_token');
+
+    return fetch('http://10.0.2.2:3333/api/1.0.0/user/' + user_id, {
+      headers: {
+        ID: user_id,
+        'X-Authorization': token,
+      },
+    })
       .then((response) => {
         if (response.status === 200) {
           return response.json();
@@ -48,10 +53,10 @@ class Profile extends Component {
           throw 'Something went wrong';
         }
       })
-      .then((responseJson) => {
+      .then((response) => {
         this.setState({
           isLoading: false,
-          listData: responseJson,
+          listData: response,
         });
       })
       .catch((error) => {
@@ -66,25 +71,25 @@ class Profile extends Component {
 
     if (this.state.isLoading) {
       return (
-        <ScrollView
-          contentContainerStyle={{flex: 1, justifyContent: 'center'}}
-          style={styles.container}>
-          <Text style={styles.title}>Error!</Text>
-        </ScrollView>
+        <View style={styles.container}>
+          <Text>Loading Profile...</Text>
+          <ActivityIndicator animating={true} />
+        </View>
       );
     } else {
       return (
-        <ScrollView
-          contentContainerStyle={{flex: 1, justifyContent: 'center'}}
-          style={styles.container}>
+        <View style={styles.container}>
           <FlatList
             data={this.state.listData}
             renderItem={({item}) => (
               <View>
-                <Text>{item.location_name}</Text>
+                <Text>{item.reviews}</Text>
               </View>
-            )}></FlatList>
-        </ScrollView>
+            )}
+            keyExtractor={(item, index) =>
+              item.review_id.toString()
+            }></FlatList>
+        </View>
       );
     }
   }
@@ -95,6 +100,8 @@ const styles = StyleSheet.create({
     padding: 16,
     marginLeft: 16,
     marginRight: 16,
+    flex: 1,
+    justifyContent: 'center',
   },
 });
 

@@ -12,9 +12,10 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 
 import LoginScreen from './components/User/Login';
+import LogoutScreen from './components/User/Logout';
 import SignUpScreen from './components/User/SignUp';
 import ProfileScreen from './components/User/Profile';
-import locationScreen from './components/Locations';
+import LocationScreen from './components/Locations';
 
 const theme = {
   ...DefaultTheme,
@@ -65,7 +66,7 @@ function CustomNavigationBar({navigation, previous}) {
         />
         <Menu.Item
           onPress={() => {
-            console.log('Logout');
+            navigation.navigate('Logout');
           }}
           title="Logout"
         />
@@ -89,10 +90,11 @@ class App extends Component {
             screenOptions={{
               header: (props) => <CustomNavigationBar {...props} />,
             }}>
-            <Stack.Screen name="Locations" component={locationScreen} />
+            <Stack.Screen name="Profile" component={ProfileScreen} />
+            <Stack.Screen name="Locations" component={LocationScreen} />
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="SignUp" component={SignUpScreen} />
-            <Stack.Screen name="Profile" component={ProfileScreen} />
+            <Stack.Screen name="Logout" component={LogoutScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </PaperProvider>
