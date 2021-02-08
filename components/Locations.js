@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {View, Text, StyleSheet, FlatList, ToastAndroid} from 'react-native';
 import {TextInput, Searchbar, ActivityIndicator} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {AirbnbRating} from '../react-native-ratings';
 
 class Locations extends Component {
   constructor(props) {
@@ -69,24 +70,37 @@ class Locations extends Component {
 
     if (this.state.isLoading) {
       return (
-        <View>
-          <Text>Loading Locations...</Text>
-          <ActivityIndicator animating={true} />
+        <View style={styles.container}>
+          <Text style={styles.header}>Loading Locations...</Text>
+          <ActivityIndicator
+            style={styles.activity}
+            size="large"
+            animating={true}
+          />
         </View>
       );
     } else {
       return (
         <View>
           <Searchbar
-            placeholder="Search"
+            placeholder="Search Locations"
             onChangeText={onChangeSearch}
             value={searchQuery}
           />
           <FlatList
             data={this.state.listData}
             renderItem={({item}) => (
-              <View>
-                <Text>{item.location_name}</Text>
+              <View style={styles.locationContainer}>
+                <Text style={styles.locationDetails}>{item.location_name}</Text>
+                <AirbnbRating
+                  style={styles.review}
+                  selectedColor={'#7a1f1f'}
+                  size={20}
+                  defaultRating={item.avg_overall_rating}
+                  isDisabled={true}
+                  showRating={false}
+                  onFinishRating={() => this.state.overall_rating}
+                />
               </View>
             )}
             keyExtractor={(item, index) => item.location_id.toString()}
@@ -104,7 +118,7 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
 
-  title: {
+  header: {
     paddingVertical: 8,
     marginBottom: 8,
     textAlign: 'center',
@@ -112,21 +126,24 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 
-  formField: {
-    marginBottom: 8,
+  activity: {
+    paddingTop: 150,
   },
 
-  error: {
-    paddingTop: 0,
-    marginBottom: 16,
-    marginLeft: -8,
-    fontSize: 16,
-  },
-
-  buttonContainer: {
+  locationContainer: {
     marginTop: 8,
-    marginLeft: 120,
-    marginRight: 120,
+    paddingTop: 32,
+    paddingBottom: 32,
+    marginLeft: 16,
+    marginRight: 16,
+    backgroundColor: '#D8D8D8',
+    flex: 1,
+    flexDirection: 'row',
+  },
+
+  locationDetails: {
+    fontSize: 16,
+    justifyContent: 'center',
   },
 });
 

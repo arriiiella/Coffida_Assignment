@@ -1,5 +1,11 @@
 import React, {Component} from 'react';
-import {TextInput, Button, Appbar, ActivityIndicator} from 'react-native-paper';
+import {
+  TextInput,
+  Button,
+  Appbar,
+  ActivityIndicator,
+  FAB,
+} from 'react-native-paper';
 import {View, Text, StyleSheet, ToastAndroid, FlatList} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -58,6 +64,7 @@ class Profile extends Component {
           isLoading: false,
           listData: response,
         });
+        //console.log(response);
       })
       .catch((error) => {
         console.log(error);
@@ -83,12 +90,19 @@ class Profile extends Component {
             data={this.state.listData}
             renderItem={({item}) => (
               <View>
-                <Text>{item.reviews}</Text>
+                <Text>Favourite Locations</Text>
+                <Text>{item.location_name}</Text>
               </View>
             )}
-            keyExtractor={(item, index) =>
-              item.review_id.toString()
-            }></FlatList>
+            keyExtractor={(item, index) => item.location_id.toString()}
+          />
+          <FAB
+            style={styles.fab}
+            medium
+            icon="plus"
+            color="#7a1f1f"
+            onPress={() => this.props.navigation.navigate('AddReview')}
+          />
         </View>
       );
     }
@@ -102,6 +116,14 @@ const styles = StyleSheet.create({
     marginRight: 16,
     flex: 1,
     justifyContent: 'center',
+  },
+
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 0,
+    color: '#7a1f1f',
   },
 });
 

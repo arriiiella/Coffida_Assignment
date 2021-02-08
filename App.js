@@ -16,6 +16,7 @@ import LogoutScreen from './components/User/Logout';
 import SignUpScreen from './components/User/SignUp';
 import ProfileScreen from './components/User/Profile';
 import LocationScreen from './components/Locations';
+import AddReviewScreen from './components/AddReview';
 
 const theme = {
   ...DefaultTheme,
@@ -95,6 +96,7 @@ class App extends Component {
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="SignUp" component={SignUpScreen} />
             <Stack.Screen name="Logout" component={LogoutScreen} />
+            <Stack.Screen name="AddReview" component={AddReviewScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </PaperProvider>
