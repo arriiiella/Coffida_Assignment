@@ -1,18 +1,24 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, FlatList, ToastAndroid} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  ToastAndroid,
+  TouchableOpacity,
+} from 'react-native';
 import {TextInput, Searchbar, ActivityIndicator} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {AirbnbRating} from '../react-native-ratings';
+import {AirbnbRating} from '../../react-native-ratings/src';
 
-class Locations extends Component {
+class GetAllLocations extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       isLoading: true,
       listData: [],
-      searchQuery: '',
-      setSearchQuery: '',
+      location_id: '',
     };
   }
 
@@ -29,10 +35,10 @@ class Locations extends Component {
   }
 
   getData = async () => {
-    const value = await AsyncStorage.getItem('@session_token');
+    const token = await AsyncStorage.getItem('@session_token');
     return fetch('http://10.0.2.2:3333/api/1.0.0/find', {
       headers: {
-        'X-Authorization': value,
+        'X-Authorization': token,
       },
     })
       .then((response) => {
@@ -91,16 +97,27 @@ class Locations extends Component {
             data={this.state.listData}
             renderItem={({item}) => (
               <View style={styles.locationContainer}>
-                <Text style={styles.locationDetails}>{item.location_name}</Text>
-                <AirbnbRating
-                  style={styles.review}
-                  selectedColor={'#7a1f1f'}
-                  size={20}
-                  defaultRating={item.avg_overall_rating}
-                  isDisabled={true}
-                  showRating={false}
-                  onFinishRating={() => this.state.overall_rating}
-                />
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={() =>
+                    this.props.navigation.navigate('GetLocation', {
+                      location_id: item.location_id,
+                    })
+                  }>
+                  <Text style={styles.locationDetails}>
+                    {item.location_id}
+                    {item.location_name}
+                  </Text>
+                  <AirbnbRating
+                    style={styles.review}
+                    selectedColor={'#7a1f1f'}
+                    size={20}
+                    defaultRating={item.avg_overall_rating}
+                    isDisabled={true}
+                    showRating={false}
+                    onFinishRating={() => this.state.overall_rating}
+                  />
+                </TouchableOpacity>
               </View>
             )}
             keyExtractor={(item, index) => item.location_id.toString()}
@@ -145,6 +162,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     justifyContent: 'center',
   },
+
+  button: {
+    alignItems: 'center',
+    backgroundColor: '#DDDDDD',
+  },
 });
 
-export default Locations;
+export default GetAllLocations;

@@ -1,21 +1,25 @@
 import React, {Component} from 'react';
 import {
-  TextInput,
-  Button,
-  Appbar,
-  ActivityIndicator,
-  FAB,
-} from 'react-native-paper';
-import {View, Text, StyleSheet, ToastAndroid, FlatList} from 'react-native';
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  ToastAndroid,
+  TouchableOpacity,
+} from 'react-native';
+import {TextInput, Searchbar, ActivityIndicator} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {AirbnbRating} from '../../react-native-ratings/src';
 
-class Profile extends Component {
+class GetLocation extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       isLoading: true,
       listData: [],
+      searchQuery: '',
+      setSearchQuery: '',
     };
   }
 
@@ -31,21 +35,11 @@ class Profile extends Component {
     this.unsubscribe();
   }
 
-  loggedIn = async () => {
-    const token = await AsyncStorage.getItem('@session_token');
-    if (token == null) {
-      this.props.navigation.navigate('Login');
-    }
-  };
-
   getData = async () => {
-    const id = await AsyncStorage.getItem('@id');
-    const user_id = parseInt(id);
     const token = await AsyncStorage.getItem('@session_token');
-
-    return fetch('http://10.0.2.2:3333/api/1.0.0/user/' + user_id, {
+    const location_id = this.props.route.params.location_id;
+    return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id, {
       headers: {
-        ID: user_id,
         'X-Authorization': token,
       },
     })
@@ -58,56 +52,45 @@ class Profile extends Component {
         } else {
           throw 'Something went wrong';
         }
+        console.log('inside block');
       })
       .then((response) => {
         this.setState({
           isLoading: false,
           listData: response,
         });
-        //console.log(response);
       })
       .catch((error) => {
         console.log(error);
       });
   };
 
-  render() {
-    const {email, password} = this.state;
+  loggedIn = async () => {
+    const value = await AsyncStorage.getItem('@session_token');
+    if (value == null) {
+      this.props.navigation.navigate('Login');
+    }
+  };
 
-    const navigation = this.props.navigation;
+  render() {
+    const {searchQuery, setSearchQuery} = this.state;
+    const onChangeSearch = (query) => setSearchQuery(query);
 
     if (this.state.isLoading) {
       return (
         <View style={styles.container}>
-          <Text>Loading Profile...</Text>
+          <Text style={styles.header}>Loading Coffee Shop...</Text>
           <ActivityIndicator
-            animating={true}
             style={styles.activity}
             size="large"
+            animating={true}
           />
         </View>
       );
     } else {
       return (
-        <View style={styles.container}>
-          <FlatList
-            data={this.state.listData}
-            renderItem={({item}) => (
-              <View>
-                <Text>Reviews</Text>
-                <Text>{item}</Text>
-              </View>
-            )}
-            keyExtractor={(item, index) => item.review_id.toString()}
-          />
-          <FAB
-            style={styles.fab}
-            medium
-            icon="plus"
-            color="#7a1f1f"
-            accessibilityLabel="Add Review"
-            onPress={() => this.props.navigation.navigate('AddReview')}
-          />
+        <View style={styles.container} data={this.state.listData}>
+         
         </View>
       );
     }
@@ -119,17 +102,40 @@ const styles = StyleSheet.create({
     padding: 16,
     marginLeft: 16,
     marginRight: 16,
+  },
+
+  header: {
+    paddingVertical: 8,
+    marginBottom: 8,
+    textAlign: 'center',
+    fontSize: 30,
+    fontWeight: 'bold',
+  },
+
+  activity: {
+    paddingTop: 150,
+  },
+
+  locationContainer: {
+    marginTop: 8,
+    paddingTop: 32,
+    paddingBottom: 32,
+    marginLeft: 16,
+    marginRight: 16,
+    backgroundColor: '#D8D8D8',
     flex: 1,
+    flexDirection: 'row',
+  },
+
+  locationDetails: {
+    fontSize: 16,
     justifyContent: 'center',
   },
 
-  fab: {
-    position: 'absolute',
-    margin: 16,
-    right: 0,
-    bottom: 0,
-    color: '#7a1f1f',
+  button: {
+    alignItems: 'center',
+    backgroundColor: '#DDDDDD',
   },
 });
 
-export default Profile;
+export default GetLocation;

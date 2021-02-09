@@ -9,7 +9,7 @@ import {
   Alert,
   ToastAndroid,
 } from 'react-native';
-import {AirbnbRating} from '../react-native-ratings';
+import {AirbnbRating} from '../../react-native-ratings/src';
 
 class AddReview extends Component {
   constructor(props) {
