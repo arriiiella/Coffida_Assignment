@@ -5,6 +5,7 @@ import {
   Appbar,
   ActivityIndicator,
   FAB,
+  IconButton,
 } from 'react-native-paper';
 import {View, Text, StyleSheet, ToastAndroid, FlatList} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -64,7 +65,6 @@ class Profile extends Component {
           isLoading: false,
           listData: response,
         });
-        //console.log(response);
       })
       .catch((error) => {
         console.log(error);
@@ -90,23 +90,26 @@ class Profile extends Component {
     } else {
       return (
         <View style={styles.container}>
+          <Text style={styles.header}>
+            Welcome Back {this.state.listData.first_name}!
+          </Text>
+          <IconButton
+            style={styles.locations}
+            icon="heart"
+            color="#7a1f1f"
+            size={20}
+            onPress={() => console.log('Pressed')}
+          />
           <FlatList
-            data={this.state.listData}
+            style={styles.reviews}
+            data={this.state.listData.reviews}
             renderItem={({item}) => (
               <View>
-                <Text>Reviews</Text>
-                <Text>{item}</Text>
+                <Text>{item.review.review_id}</Text>
+                <Text>{item.review.review_body}</Text>
               </View>
             )}
-            keyExtractor={(item, index) => item.review_id.toString()}
-          />
-          <FAB
-            style={styles.fab}
-            medium
-            icon="plus"
-            color="#7a1f1f"
-            accessibilityLabel="Add Review"
-            onPress={() => this.props.navigation.navigate('AddReview')}
+            keyExtractor={(item, index) => item.review.review_id.toString()}
           />
         </View>
       );
@@ -123,12 +126,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  fab: {
-    position: 'absolute',
-    margin: 16,
-    right: 0,
-    bottom: 0,
-    color: '#7a1f1f',
+  header: {
+    paddingVertical: 8,
+    marginBottom: 8,
+    textAlign: 'center',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+
+  locations: {
+    paddingTop: 24,
+    marginLeft: 24,
+  },
+
+  reviews: {
+    marginTop: 38,
   },
 });
 

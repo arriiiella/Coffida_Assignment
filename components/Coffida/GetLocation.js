@@ -7,9 +7,10 @@ import {
   ToastAndroid,
   TouchableOpacity,
 } from 'react-native';
-import {TextInput, Searchbar, ActivityIndicator} from 'react-native-paper';
+import {TextInput, ActivityIndicator, FAB, Divider, IconButton} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {AirbnbRating} from '../../react-native-ratings/src';
+import RatingRead from '../Helpers/Rating';
+import Review from '../Helpers/Review';
 
 class GetLocation extends Component {
   constructor(props) {
@@ -17,7 +18,7 @@ class GetLocation extends Component {
 
     this.state = {
       isLoading: true,
-      listData: [],
+      locationData: [],
       searchQuery: '',
       setSearchQuery: '',
     };
@@ -57,7 +58,7 @@ class GetLocation extends Component {
       .then((response) => {
         this.setState({
           isLoading: false,
-          listData: response,
+          locationData: response,
         });
       })
       .catch((error) => {
@@ -89,8 +90,43 @@ class GetLocation extends Component {
       );
     } else {
       return (
-        <View style={styles.container} data={this.state.listData}>
-         
+        <View style={styles.container}>
+          <Text style={styles.header}>
+            {this.state.locationData.location_name}
+          </Text>
+          <RatingRead text={'Overall'} rating={parseInt(this.state.locationData.avg_overall_rating)} size={20} disabled={true}/>
+          <RatingRead text={'Price'} rating={parseInt(this.state.locationData.avg_price_rating)} size={20} disabled={true}/>
+          <RatingRead text={'Quality'} rating={parseInt(this.state.locationData.avg_quality_rating)} size={20} disabled={true}/>
+          <RatingRead text={'Cleanliness'} rating={parseInt(this.state.locationData.avg_clenliness_rating)} size={20} disabled={true}/>
+          <Divider />
+          <Text style={styles.h2}>Reviews</Text>
+          <FlatList
+            data={this.state.locationData.location_reviews}
+            renderItem={({item}) => (
+              <View style={styles.reviewContainer}>
+                <Review text={'Overall: '} rating={item.overall_rating} />
+                <IconButton style={styles.like} icon='thumbs-up' size={16} />
+                <Review text={'Price: '} rating={item.price_rating} />
+                <Review text={'Quality: '} rating={item.quality_rating} />
+                <Review text={'Cleanliness: '} rating={item.clenliness_rating} />
+                <Review text={'Comments: '} rating={item.review_body} />
+                <Divider />
+              </View>
+            )}
+            keyExtractor={(item, index) => item.review_id.toString()}
+          />
+          <FAB
+            style={styles.fab}
+            medium
+            icon="plus"
+            color="#7a1f1f"
+            accessibilityLabel="Add Review"
+            onPress={() =>
+              this.props.navigation.navigate('AddReview', {
+                location_id: this.state.locationData.location_id,
+              })
+            }
+          />
         </View>
       );
     }
@@ -112,19 +148,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 
-  activity: {
-    paddingTop: 150,
+  h2: {
+    fontSize: 24
   },
 
-  locationContainer: {
-    marginTop: 8,
-    paddingTop: 32,
-    paddingBottom: 32,
-    marginLeft: 16,
-    marginRight: 16,
-    backgroundColor: '#D8D8D8',
-    flex: 1,
-    flexDirection: 'row',
+  activity: {
+    paddingTop: 150,
   },
 
   locationDetails: {
@@ -132,9 +161,26 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  button: {
-    alignItems: 'center',
-    backgroundColor: '#DDDDDD',
+  reviewContainer: {
+    backgroundColor: '#D8D8D8',
+    borderStyle: 'solid',
+    borderColor: '#a9a9a9',
+    paddingBottom: 8,
+    paddingTop: 8,
+    alignContent: 'center',
+    justifyContent: 'center',
+  },
+
+  like: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 0,
   },
 });
 

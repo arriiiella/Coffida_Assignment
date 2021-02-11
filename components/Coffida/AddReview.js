@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React, {Component} from 'react';
 import {TextInput, Button} from 'react-native-paper';
 import {
@@ -9,6 +8,7 @@ import {
   Alert,
   ToastAndroid,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {AirbnbRating} from '../../react-native-ratings/src';
 
 class AddReview extends Component {
@@ -16,30 +16,48 @@ class AddReview extends Component {
     super(props);
 
     this.state = {
-      overall_rating: '',
-      price_rating: '',
-      quality_rating: '',
-      clenliness_rating: '',
+      overall_rating: null,
+      price_rating: null,
+      quality_rating: null,
+      clenliness_rating: null,
       review_body: '',
+      rating: 0,
     };
+
+    this.ratingCompleted = this.ratingCompleted.bind(this.rating);
   }
 
-  addReview() {
-    const to_send = {
+  ratingCompleted(rating) {
+    console.log('Rating is: ' + rating);
+
+    this.setState({
+      rating: rating,
+    });
+  }
+
+  addReview = async () => {
+    const toSend = {
       overall_rating: this.state.overall_rating,
       price_rating: this.state.price_rating,
       quality_rating: this.state.quality_rating,
-      clenliness_rating: this.state.clenliness_ratingd,
+      clenliness_rating: this.state.clenliness_rating,
       review_body: this.state.review_body,
     };
 
-    return fetch('http://10.0.2.2:3333/api/location/' + loc_id + '/review', {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(to_send),
-    })
+    const token = await AsyncStorage.getItem('@session_token');
+    const location_id = this.props.route.params.location_id;
+    console.log(token, location_id);
+    return fetch(
+      'http://10.0.2.2:3333/api/location/' + location_id + '/review',
+      {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Authorization': token,
+        },
+        body: JSON.stringify(toSend),
+      }
+    )
       .then((response) => {
         if (response.status === 201) {
           return response.json();
@@ -57,6 +75,11 @@ class AddReview extends Component {
       .catch((error) => {
         console.log(error);
       });
+  };
+
+  addButton() {
+    this.addReview();
+    this.props.navigation.navigate('GetLocation');
   }
 
   render() {
@@ -72,7 +95,7 @@ class AddReview extends Component {
             reviewSize={16}
             size={32}
             showRating={false}
-            onFinishRating={() => this.state.overall_rating}
+            onFinishRating={() => this.ratingCompleted}
           />
         </View>
         <View style={styles.rating}>
@@ -82,7 +105,7 @@ class AddReview extends Component {
             reviewSize={16}
             size={32}
             showRating={false}
-            onFinishRating={() => this.state.price_rating}
+            onFinishRating={() => this.ratingCompleted}
           />
         </View>
         <View style={styles.rating}>
@@ -92,7 +115,7 @@ class AddReview extends Component {
             reviewSize={16}
             size={32}
             showRating={false}
-            onFinishRating={() => this.state.quality_rating}
+            onFinishRating={() => this.ratingCompleted}
           />
         </View>
         <View style={styles.rating}>
@@ -102,7 +125,7 @@ class AddReview extends Component {
             reviewSize={16}
             size={32}
             showRating={false}
-            onFinishRating={() => this.state.cleanliness_rating}
+            onFinishRating={() => this.ratingCompleted}
           />
         </View>
         <TextInput
@@ -117,7 +140,9 @@ class AddReview extends Component {
           mode="contained"
           style={styles.button}
           accessibilityLabel="Add Review"
-          onPress={() => this.addReview()}>
+          onPress={() => {
+            this.addButton();
+          }}>
           Add Review
         </Button>
       </ScrollView>

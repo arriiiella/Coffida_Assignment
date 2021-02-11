@@ -101,7 +101,7 @@ class GetAllLocations extends Component {
                   style={styles.button}
                   onPress={() =>
                     this.props.navigation.navigate('GetLocation', {
-                      location_id: item.location_id,
+                      location_id: item.location_id,      
                     })
                   }>
                   <Text style={styles.locationDetails}>
