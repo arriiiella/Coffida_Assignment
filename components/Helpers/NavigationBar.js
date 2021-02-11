@@ -4,7 +4,6 @@ import {Appbar, Menu} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CustomNavigationBar = ({navigation, previous}) => {
-  const [login, setLogin] = React.useState(false);
   const [visible, setVisible] = React.useState(false);
   const openMenu = () => setVisible(true);
   const closeMenu = () => setVisible(false);
@@ -24,8 +23,6 @@ const CustomNavigationBar = ({navigation, previous}) => {
     if (token == null) {
       setLogin(false);
       this.props.navigation.navigate('Login');
-    } else {
-      setLogin(true);
     }
   };
 
