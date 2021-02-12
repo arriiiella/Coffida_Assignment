@@ -9,9 +9,9 @@ import {
   ToastAndroid,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {AirbnbRating} from '../../react-native-ratings/src';
+import { AirbnbRating } from '../../react-native-ratings/src'
 
-class AddReview extends Component {
+class EditReview extends Component {
   constructor(props) {
     super(props);
 
@@ -21,21 +21,21 @@ class AddReview extends Component {
       quality_rating: null,
       clenliness_rating: null,
       review_body: '',
-      rating: 0,
     };
-
-    this.ratingCompleted = this.ratingCompleted.bind(this.rating);
   }
 
   ratingCompleted(rating) {
     console.log('Rating is: ' + rating);
 
     this.setState({
-      rating: rating,
+      overall_rating: rating,
+      price_rating: rating,
+      quality_rating: rating,
+      clenliness_rating: rating,
     });
   }
 
-  addReview = async () => {
+  updateReview = async () => {
     const toSend = {
       overall_rating: this.state.overall_rating,
       price_rating: this.state.price_rating,
@@ -44,13 +44,17 @@ class AddReview extends Component {
       review_body: this.state.review_body,
     };
 
+    console.log(toSend)
+
     const token = await AsyncStorage.getItem('@session_token');
     const location_id = this.props.route.params.location_id;
-    console.log(token, location_id);
+    const review_id = this.props.route.params.review.review_id;
+
+    console.log(location_id, review_id);
     return fetch(
-      'http://10.0.2.2:3333/api/location/' + location_id + '/review',
+      'http://10.0.2.2:3333/api/location/' + location_id + '/review/' + review_id,
       {
-        method: 'post',
+        method: 'patch',
         headers: {
           'Content-Type': 'application/json',
           'X-Authorization': token,
@@ -59,14 +63,13 @@ class AddReview extends Component {
       }
     )
       .then((response) => {
-        if (response.status === 201) {
+        if (response.status === 200) {
           return response.json();
-        } else if (response.status === 41) {
+        } else if (response.status === 401) {
           throw 'Failed Validation';
         } else {
           throw 'Something went wrong';
         }
-        this.getData();
       })
       .then((responseJson) => {
         console.log('Review created with ID: ', responseJson);
@@ -77,8 +80,8 @@ class AddReview extends Component {
       });
   };
 
-  addButton() {
-    this.addReview();
+    updateButton() {
+    this.updateReview();
     this.props.navigation.navigate('GetLocation');
   }
 
@@ -94,8 +97,9 @@ class AddReview extends Component {
             selectedColor={'#7a1f1f'}
             reviewSize={16}
             size={32}
+            defaultRating={this.props.route.params.review.overall_rating}
             showRating={false}
-            onFinishRating={() => this.ratingCompleted}
+            onFinishRating={(overall_rating) => this.ratingCompleted(overall_rating)}
           />
         </View>
         <View style={styles.rating}>
@@ -104,8 +108,9 @@ class AddReview extends Component {
             selectedColor={'#7a1f1f'}
             reviewSize={16}
             size={32}
+            defaultRating={this.props.route.params.review.price_rating}
             showRating={false}
-            onFinishRating={() => this.ratingCompleted}
+            onFinishRating={(price_rating) => this.ratingCompleted(price_rating)}
           />
         </View>
         <View style={styles.rating}>
@@ -114,8 +119,9 @@ class AddReview extends Component {
             selectedColor={'#7a1f1f'}
             reviewSize={16}
             size={32}
+            defaultRating={this.props.route.params.review.quality_rating}
             showRating={false}
-            onFinishRating={() => this.ratingCompleted}
+            onFinishRating={(quality_rating) => this.ratingCompleted(quality_rating)}
           />
         </View>
         <View style={styles.rating}>
@@ -124,8 +130,9 @@ class AddReview extends Component {
             selectedColor={'#7a1f1f'}
             reviewSize={16}
             size={32}
+            defaultRating={this.props.route.params.review.clenliness_rating}
             showRating={false}
-            onFinishRating={() => this.ratingCompleted}
+            onFinishRating={(clenliness_rating) => this.ratingCompleted(clenliness_rating)}
           />
         </View>
         <TextInput
@@ -139,11 +146,11 @@ class AddReview extends Component {
         <Button
           mode="contained"
           style={styles.button}
-          accessibilityLabel="Add Review"
+          accessibilityLabel="Update Review"
           onPress={() => {
-            this.addButton();
+            this.updateButton();
           }}>
-          Add Review
+          Update Review
         </Button>
       </ScrollView>
     );
@@ -189,4 +196,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddReview;
+export default EditReview;

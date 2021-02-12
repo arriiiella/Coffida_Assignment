@@ -2,16 +2,22 @@ import React from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 import { AirbnbRating } from '../../react-native-ratings/src'
 
-const RatingRead = ({ text, rating, size, disabled }) => {
+const RatingWrite = ({ text, onFinishRating, size }) => {
+  const [rating, setRating] = React.useState(0)
+
+  ratingComplete(rating) {
+    setRating = rating
+  }
+
   return (
     <View>
       <Text style={styles.text}>{text}</Text>
       <AirbnbRating
         selectedColor='#7a1f1f'
         size={size}
-        defaultRating={rating}
-        isDisabled={disabled}
+        defaultRating={3}
         showRating={false}
+        onFinishRating={(onFinishRating) => this.ratingCompleted(onFinishRating)}
       />
     </View>
   )
@@ -33,4 +39,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   }
 })
-export default RatingRead
+export default RatingWrite

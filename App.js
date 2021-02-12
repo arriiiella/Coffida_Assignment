@@ -11,11 +11,15 @@ import LoginScreen from './components/User/Login'
 import LogoutScreen from './components/User/Logout'
 import SignUpScreen from './components/User/SignUp'
 import ProfileScreen from './components/User/Profile'
-import GetAllLocationsScreen from './components/Coffida/GetAllLocations'
-import AddReviewScreen from './components/Coffida/AddReview'
-import GetLocationScreen from './components/Coffida/GetLocation'
 
-import CustomNavigationBar from './components/Helpers/NavigationBar'
+import GetAllLocationsScreen from './components/Location/GetAllLocations'
+import GetLocationScreen from './components/Location/GetLocation'
+import FindLocationsScreen from './components/Location/FindLocations'
+
+import AddReviewScreen from './components/Review/AddReview'
+import EditReviewScreen from './components/Review/EditReview'
+
+import CustomNavigationBar from './components/Modules/NavigationBar'
 
 const theme = {
   ...DefaultTheme,
@@ -41,12 +45,14 @@ class App extends Component {
             }}
           >
             <Stack.Screen name='Profile' component={ProfileScreen} />
-            <Stack.Screen name='Locations' component={GetAllLocationsScreen} />
-            <Stack.Screen name='GetLocation' component={GetLocationScreen} />
             <Stack.Screen name='Login' component={LoginScreen} />
             <Stack.Screen name='SignUp' component={SignUpScreen} />
             <Stack.Screen name='Logout' component={LogoutScreen} />
             <Stack.Screen name='AddReview' component={AddReviewScreen} />
+            <Stack.Screen name='EditReview' component={EditReviewScreen} />
+            <Stack.Screen name='FindLocations' component={FindLocationsScreen} />
+            <Stack.Screen name='Locations' component={GetAllLocationsScreen} />
+            <Stack.Screen name='GetLocation' component={GetLocationScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </PaperProvider>

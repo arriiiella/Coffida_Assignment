@@ -9,8 +9,8 @@ import {
 } from 'react-native';
 import {TextInput, ActivityIndicator, FAB, Divider, IconButton} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import RatingRead from '../Helpers/Rating';
-import Review from '../Helpers/Review';
+import RatingRead from '../Modules/RatingRead';
+import Review from '../Modules/Review';
 
 class GetLocation extends Component {
   constructor(props) {
@@ -19,8 +19,6 @@ class GetLocation extends Component {
     this.state = {
       isLoading: true,
       locationData: [],
-      searchQuery: '',
-      setSearchQuery: '',
     };
   }
 
@@ -73,6 +71,40 @@ class GetLocation extends Component {
     }
   };
 
+  postLike = async(review_id) => {
+    const token = await AsyncStorage.getItem('@session_token');
+    const location_id = this.props.route.params.location_id;
+    console.log(review_id)
+    return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/review/' + review_id, {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Authorization': token,
+      },
+    })
+      .then((response) => {
+        if (response.status === 200) {
+          return response.json()
+
+        } else if (response.status === 400) {
+          ToastAndroid.show('Failed Validation', ToastAndroid.SHORT)
+        } else {
+          ToastAndroid.show('Something went wrong', ToastAndroid.SHORT)
+        }
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
+
+  deleteLike = () => {
+
+  }
+
+  likeOnPress = (review_id) => {
+    this.postLike(review_id);
+  }
+
   render() {
     const {searchQuery, setSearchQuery} = this.state;
     const onChangeSearch = (query) => setSearchQuery(query);
@@ -90,31 +122,37 @@ class GetLocation extends Component {
       );
     } else {
       return (
-        <View style={styles.container}>
-          <Text style={styles.header}>
-            {this.state.locationData.location_name}
-          </Text>
-          <RatingRead text={'Overall'} rating={parseInt(this.state.locationData.avg_overall_rating)} size={20} disabled={true}/>
-          <RatingRead text={'Price'} rating={parseInt(this.state.locationData.avg_price_rating)} size={20} disabled={true}/>
-          <RatingRead text={'Quality'} rating={parseInt(this.state.locationData.avg_quality_rating)} size={20} disabled={true}/>
-          <RatingRead text={'Cleanliness'} rating={parseInt(this.state.locationData.avg_clenliness_rating)} size={20} disabled={true}/>
-          <Divider />
-          <Text style={styles.h2}>Reviews</Text>
-          <FlatList
+        <View>
+          <View style={styles.container}>
+            <Text style={styles.header}>
+              {this.state.locationData.location_name}
+            </Text>
+            <RatingRead text={'Overall'} rating={parseInt(this.state.locationData.avg_overall_rating)} size={20} />
+            <RatingRead text={'Price'} rating={parseInt(this.state.locationData.avg_price_rating)} size={20} />
+            <RatingRead text={'Quality'} rating={parseInt(this.state.locationData.avg_quality_rating)} size={20} />
+            <RatingRead text={'Cleanliness'} rating={parseInt(this.state.locationData.avg_clenliness_rating)} size={20} />
+
+            <Text style={styles.h2}>Reviews</Text>
+            <FlatList
             data={this.state.locationData.location_reviews}
             renderItem={({item}) => (
               <View style={styles.reviewContainer}>
                 <Review text={'Overall: '} rating={item.overall_rating} />
-                <IconButton style={styles.like} icon='thumbs-up' size={16} />
                 <Review text={'Price: '} rating={item.price_rating} />
                 <Review text={'Quality: '} rating={item.quality_rating} />
                 <Review text={'Cleanliness: '} rating={item.clenliness_rating} />
-                <Review text={'Comments: '} rating={item.review_body} />
+                <Review text={''} rating={item.review_body} />
+                <IconButton style={styles.like} icon='heart' color="#7a1f1f" size={16} onPress={()=>this.likeOnPress(item.review_id)} />
+                <IconButton style={styles.like} icon='pencil' size={16} onPress={()=> this.props.navigation.navigate('EditReview', {
+                    location_id: this.state.locationData.location_id,
+                    review: item,      
+                  })} />
                 <Divider />
               </View>
             )}
             keyExtractor={(item, index) => item.review_id.toString()}
           />
+          </View>
           <FAB
             style={styles.fab}
             medium

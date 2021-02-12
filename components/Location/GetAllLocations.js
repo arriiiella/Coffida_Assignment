@@ -7,9 +7,10 @@ import {
   ToastAndroid,
   TouchableOpacity,
 } from 'react-native';
-import {TextInput, Searchbar, ActivityIndicator} from 'react-native-paper';
+import {TextInput, ActivityIndicator} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {AirbnbRating} from '../../react-native-ratings/src';
+import RatingRead from '../Modules/RatingRead';
 
 class GetAllLocations extends Component {
   constructor(props) {
@@ -71,9 +72,6 @@ class GetAllLocations extends Component {
   };
 
   render() {
-    const {searchQuery, setSearchQuery} = this.state;
-    const onChangeSearch = (query) => setSearchQuery(query);
-
     if (this.state.isLoading) {
       return (
         <View style={styles.container}>
@@ -88,37 +86,21 @@ class GetAllLocations extends Component {
     } else {
       return (
         <View>
-          <Searchbar
-            placeholder="Search Locations"
-            onChangeText={onChangeSearch}
-            value={searchQuery}
-          />
           <FlatList
             data={this.state.listData}
             renderItem={({item}) => (
-              <View style={styles.locationContainer}>
-                <TouchableOpacity
-                  style={styles.button}
-                  onPress={() =>
-                    this.props.navigation.navigate('GetLocation', {
-                      location_id: item.location_id,      
-                    })
-                  }>
-                  <Text style={styles.locationDetails}>
-                    {item.location_id}
-                    {item.location_name}
-                  </Text>
-                  <AirbnbRating
-                    style={styles.review}
-                    selectedColor={'#7a1f1f'}
-                    size={20}
-                    defaultRating={item.avg_overall_rating}
-                    isDisabled={true}
-                    showRating={false}
-                    onFinishRating={() => this.state.overall_rating}
-                  />
-                </TouchableOpacity>
-              </View>
+              <TouchableOpacity
+                style={styles.locationContainer}
+                onPress={() =>
+                  this.props.navigation.navigate('GetLocation', {
+                    location_id: item.location_id,      
+                  })
+                }>
+                <Text style={styles.locationDetails}>
+                  {item.location_name}
+                </Text>
+               <RatingRead text={''} rating={parseInt(item.avg_overall_rating)} size={20} disabled={true}/>
+              </TouchableOpacity>
             )}
             keyExtractor={(item, index) => item.location_id.toString()}
           />
@@ -155,17 +137,11 @@ const styles = StyleSheet.create({
     marginRight: 16,
     backgroundColor: '#D8D8D8',
     flex: 1,
-    flexDirection: 'row',
   },
 
   locationDetails: {
     fontSize: 16,
     justifyContent: 'center',
-  },
-
-  button: {
-    alignItems: 'center',
-    backgroundColor: '#DDDDDD',
   },
 });
 
