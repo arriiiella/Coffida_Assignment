@@ -9,6 +9,7 @@ import {
 } from 'react-native-paper';
 import {View, Text, StyleSheet, ToastAndroid, FlatList} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Review from '../Modules/Review';
 
 class Profile extends Component {
   constructor(props) {

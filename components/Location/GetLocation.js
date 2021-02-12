@@ -75,7 +75,7 @@ class GetLocation extends Component {
     const token = await AsyncStorage.getItem('@session_token');
     const location_id = this.props.route.params.location_id;
     console.log(review_id)
-    return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/review/' + review_id, {
+    return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/review/' + review_id + '/like', {
       method: 'post',
       headers: {
         'Content-Type': 'application/json',
@@ -97,12 +97,42 @@ class GetLocation extends Component {
       })
   }
 
-  deleteLike = () => {
+  deleteLike = async (review_id) => {
+    const token = await AsyncStorage.getItem('@session_token');
+    const location_id = this.props.route.params.location_id;
+    console.log(review_id)
+    return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/review/' + review_id + '/like', {
+      method: 'delete',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Authorization': token,
+      },
+    })
+      .then((response) => {
+        if (response.status === 200) {
+          return response.json()
 
+        } else if (response.status === 400) {
+          ToastAndroid.show('Failed Validation', ToastAndroid.SHORT)
+        } else {
+          ToastAndroid.show('Something went wrong', ToastAndroid.SHORT)
+        }
+      })
+      .catch((error) => {
+        console.log(error)
+      })
   }
 
   likeOnPress = (review_id) => {
     this.postLike(review_id);
+    // if(response.status === 200)
+    // {
+    //   <IconButton style={styles.like} icon='heart' color="#7a1f1f" size={16} onPress={()=>this.likeOnPress(item.review_id)} />
+    // }
+    // if (response.status !== 200)
+    // {
+    //   this.deleteLike(review_id);
+    // }
   }
 
   render() {
@@ -142,7 +172,7 @@ class GetLocation extends Component {
                 <Review text={'Quality: '} rating={item.quality_rating} />
                 <Review text={'Cleanliness: '} rating={item.clenliness_rating} />
                 <Review text={''} rating={item.review_body} />
-                <IconButton style={styles.like} icon='heart' color="#7a1f1f" size={16} onPress={()=>this.likeOnPress(item.review_id)} />
+                <IconButton style={styles.like} icon='heart-outline' color="#7a1f1f" size={16} onPress={()=>this.likeOnPress(item.review_id)} />
                 <IconButton style={styles.like} icon='pencil' size={16} onPress={()=> this.props.navigation.navigate('EditReview', {
                     location_id: this.state.locationData.location_id,
                     review: item,      

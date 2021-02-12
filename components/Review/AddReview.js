@@ -16,32 +16,21 @@ class AddReview extends Component {
     super(props);
 
     this.state = {
-      overall_rating: null,
-      price_rating: null,
-      quality_rating: null,
-      clenliness_rating: null,
-      review_body: '',
+      overall: null,
+      price: null,
+      quality: null,
+      cleanliness: null,
+      body: '',
     };
-  }
-
-  ratingCompleted(rating) {
-    console.log('Rating is: ' + rating);
-
-    this.setState({
-      overall_rating: rating,
-      price_rating: rating,
-      quality_rating: rating,
-      clenliness_rating: rating,
-    });
   }
 
   addReview = async () => {
     const toSend = {
-      overall_rating: this.state.overall_rating,
-      price_rating: this.state.price_rating,
-      quality_rating: this.state.quality_rating,
-      clenliness_rating: this.state.clenliness_rating,
-      review_body: this.state.review_body,
+      overall_rating: this.state.overall,
+      price_rating: this.state.price,
+      quality_rating: this.state.quality,
+      clenliness_rating: this.state.cleanliness,
+      review_body: this.state.body,
     };
 
     console.log(toSend)
@@ -96,7 +85,7 @@ class AddReview extends Component {
             reviewSize={16}
             size={32}
             showRating={false}
-            onFinishRating={(overall_rating) => this.ratingCompleted(overall_rating)}
+            onFinishRating={(overall) => this.setState({overall})}
           />
         </View>
         <View style={styles.rating}>
@@ -106,7 +95,7 @@ class AddReview extends Component {
             reviewSize={16}
             size={32}
             showRating={false}
-            onFinishRating={(price_rating) => this.ratingCompleted(price_rating)}
+            onFinishRating={(price) => this.setState({price})}
           />
         </View>
         <View style={styles.rating}>
@@ -116,7 +105,7 @@ class AddReview extends Component {
             reviewSize={16}
             size={32}
             showRating={false}
-            onFinishRating={(quality_rating) => this.ratingCompleted(quality_rating)}
+            onFinishRating={(quality) => this.setState({quality})}
           />
         </View>
         <View style={styles.rating}>
@@ -126,7 +115,7 @@ class AddReview extends Component {
             reviewSize={16}
             size={32}
             showRating={false}
-            onFinishRating={(clenliness_rating) => this.ratingCompleted(clenliness_rating)}
+            onFinishRating={(cleanliness) => this.setState({cleanliness})}
           />
         </View>
         <TextInput
@@ -134,8 +123,8 @@ class AddReview extends Component {
           mode="outlined"
           multiline={true}
           label="Review..."
-          onChangeText={(review_body) => this.setState({review_body})}
-          value={this.state.review_body}
+          onChangeText={(body) => this.setState({body})}
+          value={this.state.body}
         />
         <Button
           mode="contained"
