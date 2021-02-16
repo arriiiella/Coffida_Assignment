@@ -6,10 +6,16 @@ import {
   ActivityIndicator,
   FAB,
   IconButton,
+  Text, 
+  Divider,
+  Title,
+  Headline
 } from 'react-native-paper';
-import {View, Text, StyleSheet, ToastAndroid, FlatList} from 'react-native';
+import {View, StyleSheet, ToastAndroid, FlatList} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import RatingRead from '../Modules/RatingRead';
 import Review from '../Modules/Review';
+
 
 class Profile extends Component {
   constructor(props) {
@@ -80,7 +86,7 @@ class Profile extends Component {
     if (this.state.isLoading) {
       return (
         <View style={styles.container}>
-          <Text>Loading Profile...</Text>
+          <Headline style={styles.header}>Loading Profile...</Headline>
           <ActivityIndicator
             animating={true}
             style={styles.activity}
@@ -91,23 +97,39 @@ class Profile extends Component {
     } else {
       return (
         <View style={styles.container}>
-          <Text style={styles.header}>
+          <Title style={styles.header}>
             Welcome Back {this.state.listData.first_name}!
-          </Text>
-          <IconButton
-            style={styles.locations}
-            icon="heart"
-            color="#7a1f1f"
-            size={20}
-            onPress={() => console.log('Pressed')}
-          />
+          </Title>
+          <View>
+            <Button
+              style={styles.locations}
+              icon="heart"
+              color="#7a1f1f"
+              size={20}
+              onPress={() => console.log('Pressed')}
+            >Locations</Button>
+            <Button
+              style={styles.locations}
+              icon="thumb-up"
+              color="#7a1f1f"
+              size={20}
+              onPress={() => console.log('Pressed')}
+              >Reviews</Button>
+          </View>
           <FlatList
-            style={styles.reviews}
             data={this.state.listData.reviews}
             renderItem={({item}) => (
-              <View>
+              <View style={styles.reviewContainer}>
                 <Text>{item.review.review_id}</Text>
-                <Text>{item.review.review_body}</Text>
+                <Text>{item.location.location_name}</Text>
+                <Review text={'Overall: '} rating={item.review.overall_rating} />
+                <Review text={'Price: '} rating={item.review.price_rating} />
+                <Review text={'Quality: '} rating={item.review.quality_rating} />
+                <Review text={'Cleanliness: '} rating={item.review.clenliness_rating} />
+                <Review text={''} rating={item.review.review_body} />       
+                <IconButton style={styles.edit} icon='pencil' color="#7a1f1f" size={16} onPress={()=> this.props.navigation.navigate('EditReview', {
+                  item: item, 
+                })} />         
               </View>
             )}
             keyExtractor={(item, index) => item.review.review_id.toString()}
@@ -131,7 +153,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     marginBottom: 8,
     textAlign: 'center',
-    fontSize: 24,
+    fontSize: 30,
     fontWeight: 'bold',
   },
 
@@ -142,6 +164,21 @@ const styles = StyleSheet.create({
 
   reviews: {
     marginTop: 38,
+  },
+
+  reviewContainer: {
+    backgroundColor: '#D8D8D8',
+    borderStyle: 'solid',
+    borderColor: '#a9a9a9',
+    paddingBottom: 8,
+    paddingTop: 8,
+    alignContent: 'center',
+    justifyContent: 'center',
+  },
+
+    edit: {
+    flex: 1,
+    justifyContent: 'flex-end',
   },
 });
 

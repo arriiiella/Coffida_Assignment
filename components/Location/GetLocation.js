@@ -1,13 +1,12 @@
 import React, {Component} from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   FlatList,
   ToastAndroid,
   TouchableOpacity,
 } from 'react-native';
-import {TextInput, ActivityIndicator, FAB, Divider, IconButton} from 'react-native-paper';
+import {TextInput, Text, Headline, Title, Subheading, ActivityIndicator, FAB, Divider, IconButton} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RatingRead from '../Modules/RatingRead';
 import Review from '../Modules/Review';
@@ -127,37 +126,6 @@ class GetLocation extends Component {
     this.postLike(review_id);
   }
 
-  delete = async (review_id) => {
-    const token = await AsyncStorage.getItem('@session_token');
-
-    const location_id = this.props.route.params.location_id;
-    return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/review/' + review_id, {
-      method: 'delete',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Authorization': token,
-      },
-      body: JSON.stringify(this.state),
-    })
-      .then((response) => {
-        if (response.status === 200) {
-          return response.json();
-        } else if (response.status === 401) {
-          ToastAndroid.show("You're not logged in", ToastAndroid.SHORT);
-          this.props.navigation.navigate('Login');
-        } else {
-          ToastAndroid.show("Something went wrong", ToastAndroid.SHORT);
-        }
-      })
-      .then(async (responseJson) => {
-        console.log(responseJson);
-        this.props.navigation.navigate('GetLocation');
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
-
   render() {
     const {searchQuery, setSearchQuery} = this.state;
     const onChangeSearch = (query) => setSearchQuery(query);
@@ -165,7 +133,7 @@ class GetLocation extends Component {
     if (this.state.isLoading) {
       return (
         <View style={styles.container}>
-          <Text style={styles.header}>Loading Coffee Shop...</Text>
+          <Headline style={styles.header}>Loading Coffee Shop...</Headline>
           <ActivityIndicator
             style={styles.activity}
             size="large"
@@ -177,15 +145,15 @@ class GetLocation extends Component {
       return (
         <View>
           <View style={styles.container}>
-            <Text style={styles.header}>
+            <Title style={styles.header}>
               {this.state.locationData.location_name}
-            </Text>
+            </Title>
             <RatingRead text={'Overall'} rating={parseInt(this.state.locationData.avg_overall_rating)} size={20} />
             <RatingRead text={'Price'} rating={parseInt(this.state.locationData.avg_price_rating)} size={20} />
             <RatingRead text={'Quality'} rating={parseInt(this.state.locationData.avg_quality_rating)} size={20} />
             <RatingRead text={'Cleanliness'} rating={parseInt(this.state.locationData.avg_clenliness_rating)} size={20} />
 
-            <Text style={styles.h2}>Reviews</Text>
+            <Subheading style={styles.h2}>Reviews</Subheading>
             <FlatList
             data={this.state.locationData.location_reviews}
             renderItem={({item}) => (
@@ -196,12 +164,7 @@ class GetLocation extends Component {
                 <Review text={'Cleanliness: '} rating={item.clenliness_rating} />
                 <Review text={''} rating={item.review_body} />
                 <View>
-                  <IconButton style={styles.like} icon='heart-outline' color="#7a1f1f" size={16} onPress={()=>this.likeOnPress(item.review_id)} />
-                  <IconButton style={styles.like} icon='pencil' color="#7a1f1f" size={16} onPress={()=> this.props.navigation.navigate('EditReview', {
-                      location_id: this.state.locationData.location_id,
-                      review: item,      
-                    })} />
-                  <IconButton style={styles.like} icon='delete' color="#7a1f1f" size={16} onPress={()=>this.delete(item.review_id)} />
+                  <IconButton style={styles.like} icon='thumb-up-outline' color="#7a1f1f" size={16} onPress={()=>this.likeOnPress(item.review_id)} />
                 </View>
                 <Divider />
               </View>
@@ -271,7 +234,6 @@ const styles = StyleSheet.create({
   },
 
   fab: {
-    position: 'absolute',
     margin: 16,
     right: 0,
     bottom: 0,

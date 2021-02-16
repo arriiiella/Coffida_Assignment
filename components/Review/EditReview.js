@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
-import {TextInput, Button} from 'react-native-paper';
+import {TextInput, Button, IconButton, Text, Title, Subheading} from 'react-native-paper';
 import {
   ScrollView,
   View,
-  Text,
   StyleSheet,
   Alert,
   ToastAndroid,
@@ -16,43 +15,32 @@ class EditReview extends Component {
     super(props);
 
     this.state = {
-      overall_rating: null,
-      price_rating: null,
-      quality_rating: null,
-      clenliness_rating: null,
-      review_body: '',
+      overall: this.props.route.params.item.review.overall_rating,
+      price: this.props.route.params.item.review.price_rating,
+      quality: this.props.route.params.item.review.quality_rating,
+      clenliness: this.props.route.params.item.review.clenliness_rating,
+      body: this.props.route.params.item.review.review_body,
     };
-  }
-
-  ratingCompleted(rating) {
-    console.log('Rating is: ' + rating);
-
-    this.setState({
-      overall_rating: rating,
-      price_rating: rating,
-      quality_rating: rating,
-      clenliness_rating: rating,
-    });
   }
 
   updateReview = async () => {
     const toSend = {
-      overall_rating: this.state.overall_rating,
-      price_rating: this.state.price_rating,
-      quality_rating: this.state.quality_rating,
-      clenliness_rating: this.state.clenliness_rating,
-      review_body: this.state.review_body,
+      overall_rating: this.state.overall,
+      price_rating: this.state.price,
+      quality_rating: this.state.quality,
+      clenliness_rating: this.state.clenliness,
+      review_body: this.state.body,
     };
 
     console.log(toSend)
 
     const token = await AsyncStorage.getItem('@session_token');
-    const location_id = this.props.route.params.location_id;
-    const review_id = this.props.route.params.review.review_id;
+    const location_id = this.props.route.params.item.location.location_id;
+    const review_id = this.props.route.params.item.review.review_id;
 
     console.log(location_id, review_id);
     return fetch(
-      'http://10.0.2.2:3333/api/location/' + location_id + '/review/' + review_id,
+      'http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/review/' + review_id,
       {
         method: 'patch',
         headers: {
@@ -66,14 +54,14 @@ class EditReview extends Component {
         if (response.status === 200) {
           return response.json();
         } else if (response.status === 401) {
-          throw 'Failed Validation';
+          ToastAndroid.show("You're not logged in", ToastAndroid.SHORT);
         } else {
-          throw 'Something went wrong';
+          ToastAndroid.show("Something went wrong", ToastAndroid.SHORT);
         }
       })
-      .then((responseJson) => {
-        console.log('Review created with ID: ', responseJson);
-        this.props.navigation.navigate('Profile');
+      .then((response) => {
+        console.log('Review Updated');
+        this.props.navigation.navigate('GetLocation');
       })
       .catch((error) => {
         console.log(error);
@@ -85,21 +73,55 @@ class EditReview extends Component {
     this.props.navigation.navigate('GetLocation');
   }
 
+  delete = async (review_id) => {
+  const token = await AsyncStorage.getItem('@session_token');
+  const location_id = this.props.route.params.item.location.location_id;
+  console.log(review_id, location_id)
+  return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/review/' + review_id, {
+    method: 'delete',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Authorization': token,
+    },
+    body: JSON.stringify(this.state),
+  })
+    .then((response) => {
+      if (response.status === 200) {
+        return response.json();
+      } else if (response.status === 401) {
+        ToastAndroid.show("You're not logged in", ToastAndroid.SHORT);
+        this.props.navigation.navigate('Login');
+      } else {
+        ToastAndroid.show("Something went wrong", ToastAndroid.SHORT);
+      }
+    })
+    .then(async (responseJson) => {
+      console.log(responseJson);
+      this.props.navigation.navigate('GetLocation');
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  }
+
   render() {
     const navigation = this.props.navigation;
 
     return (
       <ScrollView style={styles.container}>
-        <Text style={styles.header}>New Review</Text>
+        <View style={styles.upperContainer}>
+          <Text style={styles.header}>Update Review</Text>
+          <IconButton style={styles.delete} icon='delete' mode='contained' compact color="#7a1f1f" size={24} onPress={()=>this.delete(this.props.route.params.item.review.review_id)}/>
+        </View>
         <View style={styles.rating}>
           <Text style={styles.title}>Overall</Text>
           <AirbnbRating
             selectedColor={'#7a1f1f'}
             reviewSize={16}
             size={32}
-            defaultRating={this.props.route.params.review.overall_rating}
+            defaultRating={this.props.route.params.item.review.overall_rating}
             showRating={false}
-            onFinishRating={(overall_rating) => this.ratingCompleted(overall_rating)}
+            onFinishRating={(overall) => this.setState({overall})}
           />
         </View>
         <View style={styles.rating}>
@@ -108,9 +130,9 @@ class EditReview extends Component {
             selectedColor={'#7a1f1f'}
             reviewSize={16}
             size={32}
-            defaultRating={this.props.route.params.review.price_rating}
+            defaultRating={this.props.route.params.item.review.price_rating}
             showRating={false}
-            onFinishRating={(price_rating) => this.ratingCompleted(price_rating)}
+            onFinishRating={(price) => this.setState({price})}
           />
         </View>
         <View style={styles.rating}>
@@ -119,9 +141,9 @@ class EditReview extends Component {
             selectedColor={'#7a1f1f'}
             reviewSize={16}
             size={32}
-            defaultRating={this.props.route.params.review.quality_rating}
+            defaultRating={this.props.route.params.item.review.quality_rating}
             showRating={false}
-            onFinishRating={(quality_rating) => this.ratingCompleted(quality_rating)}
+            onFinishRating={(quality) => this.setState({quality})}
           />
         </View>
         <View style={styles.rating}>
@@ -130,9 +152,9 @@ class EditReview extends Component {
             selectedColor={'#7a1f1f'}
             reviewSize={16}
             size={32}
-            defaultRating={this.props.route.params.review.clenliness_rating}
+            defaultRating={this.props.route.params.item.review.clenliness_rating}
             showRating={false}
-            onFinishRating={(clenliness_rating) => this.ratingCompleted(clenliness_rating)}
+            onFinishRating={(clenliness) => this.setState({clenliness})}
           />
         </View>
         <TextInput
@@ -140,8 +162,8 @@ class EditReview extends Component {
           mode="outlined"
           multiline={true}
           label="Review..."
-          onChangeText={(review_body) => this.setState({review_body})}
-          value={this.state.review_body}
+          onChangeText={(body) => this.setState({body})}
+          value={this.state.body}
         />
         <Button
           mode="contained"
@@ -165,18 +187,18 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
 
-  rating: {
-    flex: 1,
-    flexDirection: 'row',
-    paddingTop: 12,
-  },
-
   header: {
     paddingVertical: 8,
     marginBottom: 8,
     textAlign: 'center',
     fontSize: 30,
     fontWeight: 'bold',
+  },
+
+  upperContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    marginLeft: 50,
   },
 
   title: {
@@ -187,12 +209,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
+  rating: {
+    flex: 1,
+    flexDirection: 'row',
+    paddingTop: 12,
+  },
+
   body: {
     paddingTop: 16,
   },
 
   button: {
     margin: 32,
+  },
+
+  delete: {
+    height: 50,
+    marginLeft: 70,
   },
 });
 
