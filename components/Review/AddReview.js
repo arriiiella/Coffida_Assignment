@@ -36,10 +36,10 @@ class AddReview extends Component {
     console.log(toSend)
 
     const token = await AsyncStorage.getItem('@session_token');
-    const location_id = this.props.route.params.location_id;
+    const location_id = parseInt(this.props.route.params.location_id);
     console.log(token, location_id);
     return fetch(
-      'http://10.0.2.2:3333/api/location/' + location_id + '/review',
+      'http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/review',
       {
         method: 'post',
         headers: {
