@@ -26,10 +26,10 @@ class AddReview extends Component {
 
   addReview = async () => {
     const toSend = {
-      overall_rating: this.state.overall,
-      price_rating: this.state.price,
-      quality_rating: this.state.quality,
-      clenliness_rating: this.state.cleanliness,
+      overall_rating: parseInt(this.state.overall),
+      price_rating: parseInt(this.state.price),
+      quality_rating: parseInt(this.state.quality),
+      clenliness_rating: parseInt(this.state.cleanliness),
       review_body: this.state.body,
     };
 
@@ -52,14 +52,14 @@ class AddReview extends Component {
       .then((response) => {
         if (response.status === 201) {
           return response.json();
-        } else if (response.status === 41) {
-          throw 'Failed Validation';
+        } else if (response.status === 401) {
+          ToastAndroid.show('Failed Validation', ToastAndroid.SHORT)
         } else {
-          throw 'Something went wrong';
+          ToastAndroid.show('Something went wrong', ToastAndroid.SHORT)
         }
       })
-      .then((responseJson) => {
-        console.log('Review created with ID: ', responseJson);
+      .then((response) => {
+        console.log('Review created');
         this.props.navigation.navigate('Profile');
       })
       .catch((error) => {
@@ -85,6 +85,7 @@ class AddReview extends Component {
             reviewSize={16}
             size={32}
             showRating={false}
+            defaultRating={3}
             onFinishRating={(overall) => this.setState({overall})}
           />
         </View>
@@ -95,6 +96,7 @@ class AddReview extends Component {
             reviewSize={16}
             size={32}
             showRating={false}
+            defaultRating={3}
             onFinishRating={(price) => this.setState({price})}
           />
         </View>
@@ -105,6 +107,7 @@ class AddReview extends Component {
             reviewSize={16}
             size={32}
             showRating={false}
+            defaultRating={3}
             onFinishRating={(quality) => this.setState({quality})}
           />
         </View>
@@ -115,6 +118,7 @@ class AddReview extends Component {
             reviewSize={16}
             size={32}
             showRating={false}
+            defaultRating={3}
             onFinishRating={(cleanliness) => this.setState({cleanliness})}
           />
         </View>

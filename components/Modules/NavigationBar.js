@@ -45,12 +45,6 @@ const CustomNavigationBar = ({ navigation, previous }) => {
         />
         <Menu.Item
           onPress={() => {
-            console.log('User Settings')
-          }}
-          title='User Settings'
-        />
-        <Menu.Item
-          onPress={() => {
             navigation.navigate('Logout')
           }}
           title='Logout'

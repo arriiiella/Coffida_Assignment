@@ -38,7 +38,6 @@ class SignUp extends Component {
         } else {
           ToastAndroid.show('Something went wrong', ToastAndroid.SHORT)
         }
-        this.getData()
       })
       .then((responseJson) => {
         console.log('User created with ID: ', responseJson)

@@ -7,7 +7,7 @@ import {
   ToastAndroid,
   TouchableOpacity,
 } from 'react-native';
-import {TextInput, ActivityIndicator} from 'react-native-paper';
+import {TextInput, ActivityIndicator, IconButton} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {AirbnbRating} from '../../react-native-ratings/src';
 import RatingRead from '../Modules/RatingRead';
@@ -71,6 +71,31 @@ class GetAllLocations extends Component {
     }
   };
 
+  like = async(location_id) => {
+  const token = await AsyncStorage.getItem('@session_token');
+  console.log(location_id)
+  return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/favourite/', {
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Authorization': token,
+    },
+  })
+    .then((response) => {
+      if (response.status === 200) {
+        return response.json()
+
+      } else if (response.status === 400) {
+        ToastAndroid.show('Failed Validation', ToastAndroid.SHORT)
+      } else {
+        ToastAndroid.show('Something went wrong', ToastAndroid.SHORT)
+      }
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+}
+
   render() {
     if (this.state.isLoading) {
       return (
@@ -100,6 +125,7 @@ class GetAllLocations extends Component {
                   {item.location_name}
                 </Text>
                <RatingRead text={''} rating={parseInt(item.avg_overall_rating)} size={20} disabled={true}/>
+               <IconButton style={styles.like} icon='heart-outline' color="#7a1f1f" size={16} onPress={()=>this.like(item.location_id)} />
               </TouchableOpacity>
             )}
             keyExtractor={(item, index) => item.location_id.toString()}
@@ -143,6 +169,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     justifyContent: 'center',
   },
+
+  like: {
+  flex: 1,
+  justifyContent: 'flex-end',
+},
 });
 
 export default GetAllLocations;

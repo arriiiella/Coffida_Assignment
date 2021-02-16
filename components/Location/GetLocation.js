@@ -97,7 +97,7 @@ class GetLocation extends Component {
       })
   }
 
-  deleteLike = async (review_id) => {
+  unlike = async (review_id) => {
     const token = await AsyncStorage.getItem('@session_token');
     const location_id = this.props.route.params.location_id;
     console.log(review_id)
@@ -125,14 +125,37 @@ class GetLocation extends Component {
 
   likeOnPress = (review_id) => {
     this.postLike(review_id);
-    // if(response.status === 200)
-    // {
-    //   <IconButton style={styles.like} icon='heart' color="#7a1f1f" size={16} onPress={()=>this.likeOnPress(item.review_id)} />
-    // }
-    // if (response.status !== 200)
-    // {
-    //   this.deleteLike(review_id);
-    // }
+  }
+
+  delete = async (review_id) => {
+    const token = await AsyncStorage.getItem('@session_token');
+
+    const location_id = this.props.route.params.location_id;
+    return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/review/' + review_id, {
+      method: 'delete',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Authorization': token,
+      },
+      body: JSON.stringify(this.state),
+    })
+      .then((response) => {
+        if (response.status === 200) {
+          return response.json();
+        } else if (response.status === 401) {
+          ToastAndroid.show("You're not logged in", ToastAndroid.SHORT);
+          this.props.navigation.navigate('Login');
+        } else {
+          ToastAndroid.show("Something went wrong", ToastAndroid.SHORT);
+        }
+      })
+      .then(async (responseJson) => {
+        console.log(responseJson);
+        this.props.navigation.navigate('GetLocation');
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   render() {
@@ -172,11 +195,14 @@ class GetLocation extends Component {
                 <Review text={'Quality: '} rating={item.quality_rating} />
                 <Review text={'Cleanliness: '} rating={item.clenliness_rating} />
                 <Review text={''} rating={item.review_body} />
-                <IconButton style={styles.like} icon='heart-outline' color="#7a1f1f" size={16} onPress={()=>this.likeOnPress(item.review_id)} />
-                <IconButton style={styles.like} icon='pencil' size={16} onPress={()=> this.props.navigation.navigate('EditReview', {
-                    location_id: this.state.locationData.location_id,
-                    review: item,      
-                  })} />
+                <View>
+                  <IconButton style={styles.like} icon='heart-outline' color="#7a1f1f" size={16} onPress={()=>this.likeOnPress(item.review_id)} />
+                  <IconButton style={styles.like} icon='pencil' color="#7a1f1f" size={16} onPress={()=> this.props.navigation.navigate('EditReview', {
+                      location_id: this.state.locationData.location_id,
+                      review: item,      
+                    })} />
+                  <IconButton style={styles.like} icon='delete' color="#7a1f1f" size={16} onPress={()=>this.delete(item.review_id)} />
+                </View>
                 <Divider />
               </View>
             )}
