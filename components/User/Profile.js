@@ -100,6 +100,9 @@ class Profile extends Component {
           <Title style={styles.header}>
             Welcome Back {this.state.listData.first_name}!
           </Title>
+          <IconButton style={styles.delete} icon='account-cog' color="#7a1f1f" size={24} onPress={()=> this.props.navigation.navigate('EditUser', {
+             item: this.state.listData
+          })} />    
           <View>
             <Button
               style={styles.locations}

@@ -32,13 +32,10 @@ class EditReview extends Component {
       review_body: this.state.body,
     };
 
-    console.log(toSend)
-
     const token = await AsyncStorage.getItem('@session_token');
     const location_id = this.props.route.params.item.location.location_id;
     const review_id = this.props.route.params.item.review.review_id;
 
-    console.log(location_id, review_id);
     return fetch(
       'http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/review/' + review_id,
       {
@@ -61,7 +58,6 @@ class EditReview extends Component {
       })
       .then((response) => {
         console.log('Review Updated');
-        this.props.navigation.navigate('GetLocation');
       })
       .catch((error) => {
         console.log(error);
@@ -111,7 +107,7 @@ class EditReview extends Component {
       <ScrollView style={styles.container}>
         <View style={styles.upperContainer}>
           <Text style={styles.header}>Update Review</Text>
-          <IconButton style={styles.delete} icon='delete' mode='contained' compact color="#7a1f1f" size={24} onPress={()=>this.delete(this.props.route.params.item.review.review_id)}/>
+          <IconButton style={styles.delete} icon='delete' color="#7a1f1f" size={24} onPress={()=>this.delete(this.props.route.params.item.review.review_id)}/>
         </View>
         <View style={styles.rating}>
           <Text style={styles.title}>Overall</Text>

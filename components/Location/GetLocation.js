@@ -18,6 +18,7 @@ class GetLocation extends Component {
     this.state = {
       isLoading: true,
       locationData: [],
+      isLiked: false,
     };
   }
 
@@ -70,10 +71,9 @@ class GetLocation extends Component {
     }
   };
 
-  postLike = async(review_id) => {
+  like = async(review_id) => {
     const token = await AsyncStorage.getItem('@session_token');
     const location_id = this.props.route.params.location_id;
-    console.log(review_id)
     return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/review/' + review_id + '/like', {
       method: 'post',
       headers: {
@@ -83,8 +83,10 @@ class GetLocation extends Component {
     })
       .then((response) => {
         if (response.status === 200) {
+          this.setState({ isLiked: true }, () => {
+            console.log(this.state.isLiked);
+          }); 
           return response.json()
-
         } else if (response.status === 400) {
           ToastAndroid.show('Failed Validation', ToastAndroid.SHORT)
         } else {
@@ -109,8 +111,10 @@ class GetLocation extends Component {
     })
       .then((response) => {
         if (response.status === 200) {
+          this.setState({ isLiked: false }, () => {
+            console.log(this.state.isLiked);
+          });
           return response.json()
-
         } else if (response.status === 400) {
           ToastAndroid.show('Failed Validation', ToastAndroid.SHORT)
         } else {
@@ -120,10 +124,6 @@ class GetLocation extends Component {
       .catch((error) => {
         console.log(error)
       })
-  }
-
-  likeOnPress = (review_id) => {
-    this.postLike(review_id);
   }
 
   render() {
@@ -163,9 +163,8 @@ class GetLocation extends Component {
                 <Review text={'Quality: '} rating={item.quality_rating} />
                 <Review text={'Cleanliness: '} rating={item.clenliness_rating} />
                 <Review text={''} rating={item.review_body} />
-                <View>
-                  <IconButton style={styles.like} icon='thumb-up-outline' color="#7a1f1f" size={16} onPress={()=>this.likeOnPress(item.review_id)} />
-                </View>
+                {console.log(this.state.isLiked)}
+                {this.state.isLiked ? <IconButton style={styles.like} icon='thumb-up' color="#7a1f1f" size={16} onPress={()=>this.unlike(item.review_id)} /> : <IconButton style={styles.like} icon='thumb-up-outline' color="#7a1f1f" size={16} onPress={()=>this.like(item.review_id)} />}
                 <Divider />
               </View>
             )}

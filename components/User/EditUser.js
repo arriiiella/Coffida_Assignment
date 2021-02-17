@@ -1,21 +1,22 @@
 import React, { Component } from 'react'
-import { TextInput, Button } from 'react-native-paper'
-import { ScrollView, Text, StyleSheet, ToastAndroid } from 'react-native'
+import { TextInput, Button, Subheading, Title } from 'react-native-paper'
+import { ScrollView, StyleSheet, ToastAndroid } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-class SignUp extends Component {
+class EditUser extends Component {
   constructor (props) {
     super(props)
 
     this.state = {
-      first_name: '',
-      last_name: '',
-      email: '',
+      first_name: this.props.route.params.item.first_name,
+      last_name: this.props.route.params.item.last_name,
+      email: this.props.route.params.item.email,
       password: '',
       confirm_password: ''
     }
   }
 
-  addUser () {
+  updateUser = async () => {
     const toSend = {
       first_name: this.state.first_name,
       last_name: this.state.last_name,
@@ -23,8 +24,12 @@ class SignUp extends Component {
       password: this.state.password
     }
 
-    return fetch('http://10.0.2.2:3333/api/1.0.0/user', {
-      method: 'post',
+    const token = await AsyncStorage.getItem('@session_token');
+    const user_id = this.props.route.params.item.user_id
+    console.log(user_id, token)
+
+    return fetch('http://10.0.2.2:3333/api/1.0.0/user/' + user_id, {
+      method: 'patch',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -40,12 +45,17 @@ class SignUp extends Component {
         }
       })
       .then((responseJson) => {
-        console.log('User created with ID: ', responseJson)
-        this.props.navigation.navigate('Login')
+        console.log('User updated')
+        this.props.navigation.navigate('Profile')
       })
       .catch((error) => {
         console.log(error)
       })
+  }
+
+  updateButton () {
+    this.updateUser()
+    this.props.navigation.navigate('Profile')
   }
 
   render () {
@@ -56,7 +66,7 @@ class SignUp extends Component {
         contentContainerStyle={{ flex: 1, justifyContent: 'center' }}
         style={styles.container}
       >
-        <Text style={styles.title}>Sign Up</Text>
+        <Title style={styles.title}>Update User</Title>
         <TextInput
           mode='outlined'
           label='First Name...'
@@ -67,7 +77,7 @@ class SignUp extends Component {
           mode='outlined'
           label='Last Name...'
           onChangeText={(last_name) => this.setState({ last_name })}
-          value={this.state.lastName}
+          value={this.state.last_name}
         />
         <TextInput
           mode='outlined'
@@ -75,6 +85,7 @@ class SignUp extends Component {
           onChangeText={(email) => this.setState({ email })}
           value={this.state.email}
         />
+        <Subheading>Change Password</Subheading>
         <TextInput
           mode='outlined'
           label='Password...'
@@ -92,17 +103,10 @@ class SignUp extends Component {
         <Button
           style={styles.buttonContainer}
           mode='contained'
-          accessibilityLabel='Sign Up'
-          onPress={() => this.addUser()}
+          accessibilityLabel='Update'
+          onPress={() => this.updateButton()}
         >
-          Sign Up
-        </Button>
-        <Button
-          mode='text'
-          accessibilityLabel='Login'
-          onPress={() => navigation.navigate('Login')}
-        >
-          Already have an account? Login
+          Update
         </Button>
       </ScrollView>
     )
@@ -139,4 +143,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default SignUp
+export default EditUser

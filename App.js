@@ -11,6 +11,7 @@ import LoginScreen from './components/User/Login'
 import LogoutScreen from './components/User/Logout'
 import SignUpScreen from './components/User/SignUp'
 import ProfileScreen from './components/User/Profile'
+import EditUserScreen from './components/User/EditUser'
 
 import GetAllLocationsScreen from './components/Location/GetAllLocations'
 import GetLocationScreen from './components/Location/GetLocation'
@@ -53,6 +54,7 @@ class App extends Component {
             <Stack.Screen name='FindLocations' component={FindLocationsScreen} />
             <Stack.Screen name='Locations' component={GetAllLocationsScreen} />
             <Stack.Screen name='GetLocation' component={GetLocationScreen} />
+            <Stack.Screen name='EditUser' component={EditUserScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </PaperProvider>
