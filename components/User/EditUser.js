@@ -25,13 +25,14 @@ class EditUser extends Component {
     }
 
     const token = await AsyncStorage.getItem('@session_token');
-    const user_id = this.props.route.params.item.user_id
+    const user_id = parseInt(this.props.route.params.item.user_id);
     console.log(user_id, token)
 
     return fetch('http://10.0.2.2:3333/api/1.0.0/user/' + user_id, {
       method: 'patch',
       headers: {
-        'Content-Type': 'application/json'
+        'X-Authorization': token,
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(toSend)
     })
