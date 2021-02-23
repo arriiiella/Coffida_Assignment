@@ -1,39 +1,39 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react'
 import {
   View,
-  Text,
   StyleSheet,
   FlatList,
   ToastAndroid,
-  TouchableOpacity,
-} from 'react-native';
-import {TextInput, ActivityIndicator, IconButton} from 'react-native-paper';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {AirbnbRating} from '../../react-native-ratings/src';
+  TouchableOpacity
+} from 'react-native'
+import { TextInput, Text, Title, Subheading, Searchbar, ActivityIndicator, Button, IconButton } from 'react-native-paper'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import LoggedIn from '../Helpers/LoggedIn'
 import RatingRead from '../Modules/RatingRead';
 
-class GetAllLocations extends Component {
-  constructor(props) {
-    super(props);
+
+class FindLocations extends Component {
+  constructor (props) {
+    super(props)
 
     this.state = {
       isLoading: true,
       listData: [],
       location_id: '',
-      isFavourited: false,
-    };
+      query: '',
+    }
   }
 
-  componentDidMount() {
+  componentDidMount () {
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
-      this.loggedIn();
-    });
+      LoggedIn()
+    })
 
-    this.getData();
+    this.getData()
   }
 
-  componentWillUnmount() {
-    this.unsubscribe();
+  componentWillUnmount () {
+    this.unsubscribe()
   }
 
   getData = async () => {
@@ -65,80 +65,58 @@ class GetAllLocations extends Component {
       });
   };
 
-  loggedIn = async () => {
-    const value = await AsyncStorage.getItem('@session_token');
-    if (value == null) {
-      this.props.navigation.navigate('Login');
-    }
-  };
-
-  favourite = async(location_id) => {
-  const token = await AsyncStorage.getItem('@session_token');
-  return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/favourite', {
-    method: 'post',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Authorization': token,
-    },
-  })
-    .then((response) => {
-      if (response.status === 200) {
-        this.setState({ isFavourited: true }, () => {
-          console.log(this.state.isFavourited);
-        });
-        return response.json()
-      } else if (response.status === 400) {
-        ToastAndroid.show('Failed Validation', ToastAndroid.SHORT)
-      } else {
-        ToastAndroid.show('Something went wrong', ToastAndroid.SHORT)
-      }
-    })
-    .catch((error) => {
-      console.log(error)
-    })
-  }
-
-  unfavourite = async (location_id) => {
+  searchData = async () => {
     const token = await AsyncStorage.getItem('@session_token');
-    return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/favourite', {
-      method: 'delete',
+    const q = (this.state.query).toString()
+    console.log(q)
+    return fetch('http://10.0.2.2:3333/api/1.0.0/find?q=' + q, {
       headers: {
-        'Content-Type': 'application/json',
         'X-Authorization': token,
       },
     })
       .then((response) => {
         if (response.status === 200) {
-          this.setState({ isFavourited: false }, () => {
-            console.log(this.state.isFavourited);
-          });
-          return response.json()
-        } else if (response.status === 400) {
-          ToastAndroid.show('Failed Validation', ToastAndroid.SHORT)
+          return response.json();
+        } else if (response.status === 401) {
+          ToastAndroid.show("You're not logged in", ToastAndroid.SHORT);
+          this.props.navigation.navigate('Login');
         } else {
-          ToastAndroid.show('Something went wrong', ToastAndroid.SHORT)
+          throw 'Something went wrong';
         }
+        console.log('inside block');
+      })
+      .then((response) => {
+        this.setState({
+          isLoading: false,
+          listData: response,
+        });
       })
       .catch((error) => {
-        console.log(error)
-      })
+        console.log(error);
+      });
   }
 
-  render() {
+  render () {
     if (this.state.isLoading) {
       return (
         <View style={styles.container}>
-          <Text style={styles.header}>Loading Locations...</Text>
+          <Text style={styles.header}>Loading...</Text>
           <ActivityIndicator
             style={styles.activity}
-            size="large"
-            animating={true}
+            size='large'
+            animating
           />
         </View>
-      );
+      )
     } else {
       return (
         <View>
+          <Searchbar
+            placeholder='Search Locations'
+            onChangeText={(query) => this.setState({query})}
+            value={this.state.query}
+          />
+          <Button mode='contained' onPress={() => this.searchData()}>Search</Button>
           <FlatList
             data={this.state.listData}
             renderItem={({item}) => (
@@ -159,7 +137,7 @@ class GetAllLocations extends Component {
             keyExtractor={(item, index) => item.location_id.toString()}
           />
         </View>
-      );
+      )
     }
   }
 }
@@ -168,7 +146,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 16,
     marginLeft: 16,
-    marginRight: 16,
+    marginRight: 16
   },
 
   header: {
@@ -176,11 +154,11 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     textAlign: 'center',
     fontSize: 30,
-    fontWeight: 'bold',
+    fontWeight: 'bold'
   },
 
   activity: {
-    paddingTop: 150,
+    paddingTop: 150
   },
 
   locationContainer: {
@@ -190,18 +168,18 @@ const styles = StyleSheet.create({
     marginLeft: 16,
     marginRight: 16,
     backgroundColor: '#D8D8D8',
-    flex: 1,
+    flex: 1
   },
 
   locationDetails: {
     fontSize: 16,
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
 
   like: {
-  flex: 1,
-  justifyContent: 'flex-end',
-},
-});
+    flex: 1,
+    justifyContent: 'flex-end'
+  }
+})
 
-export default GetAllLocations;
+export default FindLocations

@@ -78,6 +78,36 @@ class Profile extends Component {
       });
   };
 
+  searchData = async (q) => {
+    const token = await AsyncStorage.getItem('@session_token');
+    console.log(q)
+    return fetch('http://10.0.2.2:3333/api/1.0.0/find?q=search_in=' + q, {
+      headers: {
+        'X-Authorization': token,
+      },
+    })
+      .then((response) => {
+        if (response.status === 200) {
+          return response.json();
+        } else if (response.status === 401) {
+          ToastAndroid.show("You're not logged in", ToastAndroid.SHORT);
+          this.props.navigation.navigate('Login');
+        } else {
+          throw 'Something went wrong';
+        }
+        console.log('inside block');
+      })
+      .then((response) => {
+        this.setState({
+          isLoading: false,
+          listData: response,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
   render() {
     const {email, password} = this.state;
 
@@ -102,28 +132,25 @@ class Profile extends Component {
           </Title>
           <IconButton style={styles.delete} icon='account-cog' color="#7a1f1f" size={24} onPress={()=> this.props.navigation.navigate('EditUser', {
              item: this.state.listData
-          })} />    
+          })} />     
           <View>
             <Button
               style={styles.locations}
               icon="heart"
               color="#7a1f1f"
               size={20}
-              onPress={() => console.log('Pressed')}
-            >Locations</Button>
+              onPress={()=> this.searchData('favourite')}>Fave Locations</Button>
             <Button
               style={styles.locations}
               icon="thumb-up"
               color="#7a1f1f"
               size={20}
-              onPress={() => console.log('Pressed')}
-              >Reviews</Button>
+              onPress={()=> this.searchData('reviewed')}>Liked Reviews</Button>
           </View>
           <FlatList
             data={this.state.listData.reviews}
             renderItem={({item}) => (
               <View style={styles.reviewContainer}>
-                <Text>{item.review.review_id}</Text>
                 <Text>{item.location.location_name}</Text>
                 <Review text={'Overall: '} rating={item.review.overall_rating} />
                 <Review text={'Price: '} rating={item.review.price_rating} />

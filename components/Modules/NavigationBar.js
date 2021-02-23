@@ -39,7 +39,7 @@ const CustomNavigationBar = ({ navigation, previous }) => {
         />
         <Menu.Item
           onPress={() => {
-            navigation.navigate('Locations')
+            navigation.navigate('FindLocations')
           }}
           title='Locations'
         />
