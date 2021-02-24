@@ -83,10 +83,9 @@ class GetLocation extends Component {
     })
       .then((response) => {
         if (response.status === 200) {
-          this.setState({ isLiked: true }, () => {
-            console.log(this.state.isLiked);
-          }); 
+          this.setState({ isLiked: true })
           return response.json()
+          this.getData()
         } else if (response.status === 400) {
           ToastAndroid.show('Failed Validation', ToastAndroid.SHORT)
         } else {
@@ -101,7 +100,6 @@ class GetLocation extends Component {
   unlike = async (review_id) => {
     const token = await AsyncStorage.getItem('@session_token');
     const location_id = this.props.route.params.location_id;
-    console.log(review_id)
     return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/review/' + review_id + '/like', {
       method: 'delete',
       headers: {
@@ -148,30 +146,7 @@ class GetLocation extends Component {
             <Title style={styles.header}>
               {this.state.locationData.location_name}
             </Title>
-            <RatingRead text={'Overall'} rating={parseInt(this.state.locationData.avg_overall_rating)} size={20} />
-            <RatingRead text={'Price'} rating={parseInt(this.state.locationData.avg_price_rating)} size={20} />
-            <RatingRead text={'Quality'} rating={parseInt(this.state.locationData.avg_quality_rating)} size={20} />
-            <RatingRead text={'Cleanliness'} rating={parseInt(this.state.locationData.avg_clenliness_rating)} size={20} />
-
-            <Subheading style={styles.h2}>Reviews</Subheading>
-            <FlatList
-            data={this.state.locationData.location_reviews}
-            renderItem={({item}) => (
-              <View style={styles.reviewContainer}>
-                <Review text={'Overall: '} rating={item.overall_rating} />
-                <Review text={'Price: '} rating={item.price_rating} />
-                <Review text={'Quality: '} rating={item.quality_rating} />
-                <Review text={'Cleanliness: '} rating={item.clenliness_rating} />
-                <Review text={''} rating={item.review_body} />
-                {console.log(this.state.isLiked)}
-                {this.state.isLiked ? <IconButton style={styles.like} icon='thumb-up' color="#7a1f1f" size={16} onPress={()=>this.unlike(item.review_id)} /> : <IconButton style={styles.like} icon='thumb-up-outline' color="#7a1f1f" size={16} onPress={()=>this.like(item.review_id)} />}
-                <Divider />
-              </View>
-            )}
-            keyExtractor={(item, index) => item.review_id.toString()}
-          />
-          </View>
-          <FAB
+            <FAB
             style={styles.fab}
             medium
             icon="plus"
@@ -183,6 +158,28 @@ class GetLocation extends Component {
               })
             }
           />
+            <RatingRead text={'Overall'} rating={parseInt(this.state.locationData.avg_overall_rating)} size={20} />
+            <RatingRead text={'Price'} rating={parseInt(this.state.locationData.avg_price_rating)} size={20} />
+            <RatingRead text={'Quality'} rating={parseInt(this.state.locationData.avg_quality_rating)} size={20} />
+            <RatingRead text={'Cleanliness'} rating={parseInt(this.state.locationData.avg_clenliness_rating)} size={20} />
+            <Subheading style={styles.h2}>Reviews</Subheading>
+            <FlatList
+            data={this.state.locationData.location_reviews}
+            renderItem={({item}) => (
+              <View style={styles.reviewContainer}>
+                <Review text={'Overall: '} rating={item.overall_rating} />
+                <Review text={'Price: '} rating={item.price_rating} />
+                <Review text={'Quality: '} rating={item.quality_rating} />
+                <Review text={'Cleanliness: '} rating={item.clenliness_rating} />
+                <Review text={''} rating={item.review_body} />
+                {this.state.isLiked ? <IconButton style={styles.like} icon='thumb-up' color="#7a1f1f" size={16} onPress={()=>this.unlike(item.review_id)} /> : <IconButton style={styles.like} icon='thumb-up-outline' color="#7a1f1f" size={16} onPress={()=>this.like(item.review_id)} />}
+                <Text>{item.likes}</Text>
+                <Divider />
+              </View>
+            )}
+            keyExtractor={(item, index) => item.review_id.toString()}
+          />
+          </View>
         </View>
       );
     }
@@ -233,9 +230,11 @@ const styles = StyleSheet.create({
   },
 
   fab: {
+    position: 'absolute',
     margin: 16,
     right: 0,
-    bottom: 0,
+    top: 0,
+    color: '#7a1f1f',
   },
 });
 
