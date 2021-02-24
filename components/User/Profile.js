@@ -159,7 +159,8 @@ class Profile extends Component {
                 <Review text={''} rating={item.review.review_body} />       
                 <IconButton style={styles.edit} icon='pencil' color="#7a1f1f" size={16} onPress={()=> this.props.navigation.navigate('EditReview', {
                   item: item, 
-                })} />         
+                })} />
+                <Text>Likes: {item.review.likes}</Text>         
               </View>
             )}
             keyExtractor={(item, index) => item.review.review_id.toString()}

@@ -10,8 +10,7 @@ import { TextInput, List, Text, Title, Subheading, Searchbar, ActivityIndicator,
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import LoggedIn from '../Helpers/LoggedIn'
 import RatingRead from '../Modules/RatingRead'
-import { AirbnbRating } from '../../react-native-ratings/src'
-
+import Filters from '../Modules/Filters'
 
 class FindLocations extends Component {
   constructor (props) {
@@ -23,11 +22,18 @@ class FindLocations extends Component {
       listData: [],
       location_id: '',
       query: '',
-      overall: 0,
-      price: 0,
-      quality: 0,
-      cleanliness: 0,
+      overall: null,
+      price: null,
+      quality: null,
+      cleanliness: null,
     }
+  }
+
+  updateRatingState () {
+
+
+
+    
   }
 
   componentDidMount () {
@@ -36,6 +42,7 @@ class FindLocations extends Component {
     })
 
     this.getData()
+    this.setState({isVisible: false})
   }
 
   componentWillUnmount () {
@@ -76,14 +83,14 @@ class FindLocations extends Component {
     const token = await AsyncStorage.getItem('@session_token');
     const q = (this.state.query).toString()
 
-    if(this.state.q != '') {
-      url += 'q=' + this.state.q + '&'
+    if(q != '') {
+      url += 'q=' + q + '&'
     }
-    console.log(q)
+
     if(this.state.overall > 0){
       url += 'overall_rating=' + this.state.overall + '&'
     }
-    return fetch('http://10.0.2.2:3333/api/1.0.0/find?q=' + q + '&', {
+    return fetch(url, {
       headers: {
         'X-Authorization': token,
       },
@@ -110,6 +117,58 @@ class FindLocations extends Component {
       });
   }
 
+  favourite = async(location_id) => {
+  const token = await AsyncStorage.getItem('@session_token');
+  return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/favourite', {
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Authorization': token,
+    },
+  })
+    .then((response) => {
+      if (response.status === 200) {
+        this.setState({ isFavourited: true }, () => {
+          console.log(this.state.isFavourited);
+        });
+        return response.json()
+      } else if (response.status === 400) {
+        ToastAndroid.show('Failed Validation', ToastAndroid.SHORT)
+      } else {
+        ToastAndroid.show('Something went wrong', ToastAndroid.SHORT)
+      }
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+  }
+
+  unfavourite = async (location_id) => {
+    const token = await AsyncStorage.getItem('@session_token');
+    return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/favourite', {
+      method: 'delete',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Authorization': token,
+      },
+    })
+      .then((response) => {
+        if (response.status === 200) {
+          this.setState({ isFavourited: false }, () => {
+            console.log(this.state.isFavourited);
+          });
+          return response.json()
+        } else if (response.status === 400) {
+          ToastAndroid.show('Failed Validation', ToastAndroid.SHORT)
+        } else {
+          ToastAndroid.show('Something went wrong', ToastAndroid.SHORT)
+        }
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
+
   render () {
     if (this.state.isLoading) {
       return (
@@ -130,51 +189,7 @@ class FindLocations extends Component {
             onChangeText={(query) => this.setState({query})}
             value={this.state.query}
           />
-          <List.Accordion
-            left={props => <List.Icon {...props} icon='filter' />}
-            isVisible={this.state.isVisible}
-            onPress={this.setState({ isVisible: true})}>
-            <List.Section>
-              <List.Item title='Overall' />
-              <AirbnbRating
-                selectedColor='#7a1f1f'
-                size={20}
-                defaultRating={3}
-                showRating={false}
-                onFinishRating={(overall) => this.setState({ overall })}
-              />
-            </List.Section>
-            <List.Section>
-              <List.Item title='Price' />
-              <AirbnbRating
-                selectedColor='#7a1f1f'
-                size={20}
-                defaultRating={3}
-                showRating={false}
-                onFinishRating={(price) => this.setState({ price })}
-              />
-            </List.Section>
-            <List.Section>
-              <List.Item title='Quality' />
-              <AirbnbRating
-                selectedColor='#7a1f1f'
-                size={20}
-                defaultRating={3}
-                showRating={false}
-                onFinishRating={(quality) => this.setState({ quality })}
-              />
-            </List.Section>
-            <List.Section>
-              <List.Item title='Cleanliness' />
-              <AirbnbRating
-                selectedColor='#7a1f1f'
-                size={20}
-                defaultRating={3}
-                showRating={false}
-                onFinishRating={(cleanliness) => this.setState({ cleanliness })}
-              />
-=            </List.Section>
-          </List.Accordion>
+          <Filters />
           <Button mode='contained' onPress={() => this.searchData()}>Search</Button>
           <FlatList
             data={this.state.listData}
