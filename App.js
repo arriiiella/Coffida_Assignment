@@ -19,6 +19,7 @@ import FaveLocationsScreen from './components/Location/FaveLocations'
 
 import AddReviewScreen from './components/Review/AddReview'
 import EditReviewScreen from './components/Review/EditReview'
+import PhotoScreen from './components/Review/Photo'
 
 import CustomNavigationBar from './components/Modules/NavigationBar'
 
@@ -55,6 +56,7 @@ class App extends Component {
             <Stack.Screen name='GetLocation' component={GetLocationScreen} />
             <Stack.Screen name='EditUser' component={EditUserScreen} />
             <Stack.Screen name='FaveLocations' component={FaveLocationsScreen} />
+            <Stack.Screen name='Photo' component={PhotoScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </PaperProvider>

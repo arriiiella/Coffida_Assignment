@@ -64,7 +64,7 @@ class EditReview extends Component {
       });
   };
 
-    updateButton() {
+  updateButton() {
     this.updateReview();
     this.props.navigation.navigate('GetLocation');
   }
@@ -84,6 +84,7 @@ class EditReview extends Component {
     .then((response) => {
       if (response.status === 200) {
         return response.json();
+        this.getData();
       } else if (response.status === 401) {
         ToastAndroid.show("You're not logged in", ToastAndroid.SHORT);
         this.props.navigation.navigate('Login');
@@ -100,6 +101,42 @@ class EditReview extends Component {
     });
   }
 
+  
+  deleteButton(review_id) {
+    this.delete(review_id);
+    this.props.navigation.navigate('GetLocation');
+  }
+
+  getData = async () => {
+    const token = await AsyncStorage.getItem('@session_token');
+    const location_id = parseInt(this.props.route.params.location_id);
+    return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id, {
+      headers: {
+        'X-Authorization': token,
+      },
+    })
+      .then((response) => {
+        if (response.status === 200) {
+          return response.json();
+        } else if (response.status === 401) {
+          ToastAndroid.show("You're not logged in", ToastAndroid.SHORT);
+          this.props.navigation.navigate('Login');
+        } else {
+          throw 'Something went wrong';
+        }
+        console.log('inside block');
+      })
+      .then((response) => {
+        this.setState({
+          isLoading: false,
+          locationData: response,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   render() {
     const navigation = this.props.navigation;
 
@@ -107,8 +144,9 @@ class EditReview extends Component {
       <ScrollView style={styles.container}>
         <View style={styles.upperContainer}>
           <Text style={styles.header}>Update Review</Text>
-          <IconButton style={styles.delete} icon='delete' color="#7a1f1f" size={24} onPress={()=>this.delete(this.props.route.params.item.review.review_id)}/>
+          <IconButton style={styles.delete} icon='delete' color="#7a1f1f" size={24} onPress={()=>this.deleteButton(this.props.route.params.item.review.review_id)}/>
         </View>
+        <Button icon='camera' color="#7a1f1f" size={24} onPress={()=> navigation.navigate('Photo')}> Add a Photo </Button>
         <View style={styles.rating}>
           <Text style={styles.title}>Overall</Text>
           <AirbnbRating
