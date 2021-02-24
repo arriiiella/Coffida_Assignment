@@ -1,11 +1,11 @@
 import React from 'react'
 import { View, Text, StyleSheet } from 'react-native'
-import { TextInput } from 'react-native-paper'
 import { AirbnbRating } from '../../react-native-ratings/src'
 
-const RatingWrite = ({text}) => {
+const RatingWrite = ({ text }) => {
   const [rating, setRating] = React.useState(0)
   const handleRating = (value) => setRating(value)
+
   return (
     <View>
       <Text style={styles.text}>{text}</Text>
@@ -14,7 +14,7 @@ const RatingWrite = ({text}) => {
         size={20}
         defaultRating={3}
         showRating={false}
-        onFinishRating={(value) => this.handleRating({ value })}
+        onFinishRating={(rating) => handleRating({ rating })}
       />
     </View>
   )

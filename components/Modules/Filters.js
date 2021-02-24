@@ -2,18 +2,10 @@ import * as React from 'react'
 import { List } from 'react-native-paper'
 import { AirbnbRating } from '../../react-native-ratings/src'
 
-const Filters = () => {
+const Filters = ({ overall, price, quality, cleanliness }) => {
   const [expanded, setExpanded] = React.useState(true)
-  const [overall, setOverall] = React.useState(null)
-  const [price, setPrice] = React.useState(null)
-  const [quality, setQuality] = React.useState(null)
-  const [cleanliness, setCleanliness] = React.useState(null)
 
   const handlePress = () => setExpanded(!expanded)
-  const handleOverall = (value) => setOverall(value)
-  const handlePrice = (value) => setPrice(value)
-  const handleQuality = (value) => setQuality(value)
-  const handleCleanliness = (value) => setCleanliness(value)
 
   return (
     <List.Accordion
@@ -29,7 +21,7 @@ const Filters = () => {
           size={20}
           defaultRating={3}
           showRating={false}
-          onFinishRating={(overall) => handleOverall({ overall })}
+          onFinishRating={(value) => overall(value)}
         />
       </List.Section>
       <List.Section>
@@ -40,7 +32,7 @@ const Filters = () => {
           size={20}
           defaultRating={3}
           showRating={false}
-          onFinishRating={(price) => handlePrice({ price })}
+          onFinishRating={(value) => price(value)}
         />
       </List.Section>
       <List.Section>
@@ -51,7 +43,7 @@ const Filters = () => {
           size={20}
           defaultRating={3}
           showRating={false}
-          onFinishRating={(quality) => handleQuality({ quality })}
+          onFinishRating={(value) => quality(value)}
         />
       </List.Section>
       <List.Section>
@@ -62,7 +54,7 @@ const Filters = () => {
           size={20}
           defaultRating={3}
           showRating={false}
-          onFinishRating={(cleanliness) => handleCleanliness({ cleanliness })}
+          onFinishRating={(value) => cleanliness(value)}
         />
       </List.Section>
     </List.Accordion>

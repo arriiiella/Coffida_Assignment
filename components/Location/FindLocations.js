@@ -27,14 +27,17 @@ class FindLocations extends Component {
       quality: null,
       cleanliness: null,
     }
+
+    this.handleOverall = this.handleOverall.bind(this)
+    this.handlePrice = this.handlePrice.bind(this)
+    this.handleQuality = this.handleQuality.bind(this)
+    this.handleCleanliness = this.handleCleanliness.bind(this)
   }
 
-  updateRatingState () {
-
-
-
-    
-  }
+  handleOverall(value){ this.setState({overall: value})}
+  handlePrice(value){ this.setState({price: value}) }
+  handleQuality(value){ this.setState({quality: value}) }
+  handleCleanliness(value){ this.setState({cleanliness: value}) }
 
   componentDidMount () {
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
@@ -81,15 +84,27 @@ class FindLocations extends Component {
   searchData = async () => {
     let url = 'http://10.0.2.2:3333/api/1.0.0/find?'
     const token = await AsyncStorage.getItem('@session_token');
-    const q = (this.state.query).toString()
 
-    if(q != '') {
-      url += 'q=' + q + '&'
+    if(this.state.query != '') {
+      url += 'q=' + this.state.query + '&'
     }
 
     if(this.state.overall > 0){
       url += 'overall_rating=' + this.state.overall + '&'
     }
+
+    if(this.state.price > 0){
+      url += 'price_rating=' + this.state.price + '&'
+    }
+
+    if(this.state.quality > 0){
+      url += 'quality_rating=' + this.state.quality + '&'
+    }
+
+    if(this.state.cleanliness > 0){
+      url += 'clenliness_rating=' + this.state.cleanliness + '&'
+    }
+
     return fetch(url, {
       headers: {
         'X-Authorization': token,
@@ -189,7 +204,8 @@ class FindLocations extends Component {
             onChangeText={(query) => this.setState({query})}
             value={this.state.query}
           />
-          <Filters />
+          <Filters overall={this.handleOverall} price={this.handlePrice} quality={this.handleQuality} cleanliness={this.handleCleanliness}/>
+          {console.log(this.state.overall)}
           <Button mode='contained' onPress={() => this.searchData()}>Search</Button>
           <FlatList
             data={this.state.listData}

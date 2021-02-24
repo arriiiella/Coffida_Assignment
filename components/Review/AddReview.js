@@ -1,21 +1,22 @@
 import React, {Component} from 'react';
-import {TextInput, Button} from 'react-native-paper';
+import {TextInput, Button, Text, Portal, Modal} from 'react-native-paper';
 import {
   ScrollView,
   View,
-  Text,
   StyleSheet,
   Alert,
   ToastAndroid,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AirbnbRating } from '../../react-native-ratings/src'
+import { AirbnbRating } from '../../react-native-ratings/src';
+import PopUp from '../Modules/PopUp'
 
 class AddReview extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      isVisible: true,
       overall: null,
       price: null,
       quality: null,
@@ -52,15 +53,43 @@ class AddReview extends Component {
       .then((response) => {
         if (response.status === 201) {
           return response.json();
+          this.getData()
+          this.props.navigation.navigate('GetLocation');
         } else if (response.status === 401) {
           ToastAndroid.show('Failed Validation', ToastAndroid.SHORT)
         } else {
           ToastAndroid.show('Something went wrong', ToastAndroid.SHORT)
         }
       })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  getData = async () => {
+    const token = await AsyncStorage.getItem('@session_token');
+    const location_id = parseInt(this.props.route.params.location_id);
+    return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id, {
+      headers: {
+        'X-Authorization': token,
+      },
+    })
       .then((response) => {
-        console.log('Review created');
-        this.props.navigation.navigate('Profile');
+        if (response.status === 200) {
+          return response.json();
+        } else if (response.status === 401) {
+          ToastAndroid.show("You're not logged in", ToastAndroid.SHORT);
+          this.props.navigation.navigate('Login');
+        } else {
+          throw 'Something went wrong';
+        }
+        console.log('inside block');
+      })
+      .then((response) => {
+        this.setState({
+          isLoading: false,
+          locationData: response,
+        });
       })
       .catch((error) => {
         console.log(error);
@@ -135,7 +164,7 @@ class AddReview extends Component {
           style={styles.button}
           accessibilityLabel="Add Review"
           onPress={() => {
-            this.addButton();
+            this.addReview();
           }}>
           Add Review
         </Button>
