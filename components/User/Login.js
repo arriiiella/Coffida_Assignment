@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {TextInput, Button, Appbar, DefaultTheme} from 'react-native-paper';
+import {TextInput, HelperText, Button, Appbar, DefaultTheme} from 'react-native-paper';
 import {ScrollView, Text, StyleSheet, ToastAndroid} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -34,7 +34,6 @@ class Login extends Component {
           return response.json();
         } else if (response.status === 400) {
           ToastAndroid.show('Invalid Email or Password!', ToastAndroid.SHORT);
-          throw 'Invalid Email or Password';
         } else {
           throw 'Something went wrong';
         }
@@ -55,7 +54,7 @@ class Login extends Component {
 
     const navigation = this.props.navigation;
 
-    const hasErrors = () => {
+    const validateEmail = () => {
       return !this.state.email.includes('@');
     };
 
@@ -70,6 +69,9 @@ class Login extends Component {
           onChangeText={this.handleEmailInput}
           value={this.state.email}
         />
+        <HelperText style={styles.error} type="error" visible={validateEmail()}>
+        Email address is invalid!
+        </HelperText>
         <TextInput
           style={styles.formField}
           label="Password"
@@ -118,7 +120,8 @@ const styles = StyleSheet.create({
     paddingTop: 0,
     marginBottom: 16,
     marginLeft: -8,
-    fontSize: 16,
+    fontSize: 12,
+    color: '#7a1f1f'
   },
 
   buttonContainer: {

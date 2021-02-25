@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import { TextInput, Button } from 'react-native-paper'
-import { ScrollView, Text, StyleSheet, ToastAndroid } from 'react-native'
+import { TextInput, Button, HelperText, Text } from 'react-native-paper'
+import { ScrollView, StyleSheet, ToastAndroid } from 'react-native'
 
 class SignUp extends Component {
   constructor (props) {
@@ -51,6 +51,13 @@ class SignUp extends Component {
   render () {
     const navigation = this.props.navigation
 
+    const validateEmail = () => {
+      return !this.state.email.includes('@')
+    }
+
+    const validatePassword = () => {
+      return (this.state.password !== this.state.confirm_password)
+    }
     return (
       <ScrollView
         contentContainerStyle={{ flex: 1, justifyContent: 'center' }}
@@ -75,6 +82,9 @@ class SignUp extends Component {
           onChangeText={(email) => this.setState({ email })}
           value={this.state.email}
         />
+        <HelperText style={styles.error} type='error' visible={validateEmail()}>
+          Email address is invalid!
+        </HelperText>
         <TextInput
           mode='outlined'
           label='Password...'
@@ -89,6 +99,9 @@ class SignUp extends Component {
           secureTextEntry
           value={this.state.confirm_password}
         />
+        <HelperText style={styles.error} type='error' visible={validatePassword()}>
+          Passwords don't match!
+        </HelperText>
         <Button
           style={styles.buttonContainer}
           mode='contained'
@@ -136,6 +149,14 @@ const styles = StyleSheet.create({
     marginTop: 16,
     marginLeft: 16,
     display: 'flex'
+  },
+
+  error: {
+    paddingTop: 8,
+    marginBottom: 8,
+    marginLeft: -8,
+    fontSize: 12,
+    color: '#7a1f1f'
   }
 })
 
