@@ -7,18 +7,18 @@ class SignUp extends Component {
     super(props)
 
     this.state = {
-      first_name: '',
-      last_name: '',
+      firstName: '',
+      lastName: '',
       email: '',
       password: '',
-      confirm_password: ''
+      confirmPassword: ''
     }
   }
 
   addUser () {
     const toSend = {
-      first_name: this.state.first_name,
-      last_name: this.state.last_name,
+      first_name: this.state.firstName,
+      last_name: this.state.lastName,
       email: this.state.email,
       password: this.state.password
     }
@@ -56,7 +56,7 @@ class SignUp extends Component {
     }
 
     const validatePassword = () => {
-      return (this.state.password !== this.state.confirm_password)
+      return (this.state.password !== this.state.confirmPassword)
     }
     return (
       <ScrollView
@@ -67,13 +67,13 @@ class SignUp extends Component {
         <TextInput
           mode='outlined'
           label='First Name...'
-          onChangeText={(first_name) => this.setState({ first_name })}
-          value={this.state.first_name}
+          onChangeText={(firstName) => this.setState({ firstName })}
+          value={this.state.firstName}
         />
         <TextInput
           mode='outlined'
           label='Last Name...'
-          onChangeText={(last_name) => this.setState({ last_name })}
+          onChangeText={(lastName) => this.setState({ lastName })}
           value={this.state.lastName}
         />
         <TextInput
@@ -95,9 +95,9 @@ class SignUp extends Component {
         <TextInput
           mode='outlined'
           label='Confirm Password...'
-          onChangeText={(confirm_password) => this.setState({ confirm_password })}
+          onChangeText={(confirmPassword) => this.setState({ confirmPassword })}
           secureTextEntry
-          value={this.state.confirm_password}
+          value={this.state.confirmPassword}
         />
         <HelperText style={styles.error} type='error' visible={validatePassword()}>
           Passwords don't match!

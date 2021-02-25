@@ -117,9 +117,8 @@ class EditUser extends Component {
 const styles = StyleSheet.create({
   container: {
     padding: 16,
-    marginBottom: 8,
     marginLeft: 16,
-    marginRight: 16
+    marginRight: 16,
   },
 
   title: {

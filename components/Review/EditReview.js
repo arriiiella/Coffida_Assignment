@@ -39,7 +39,24 @@ class EditReview extends Component {
     if (token == null) {
       this.props.navigation.navigate('Login');
     }
-  };
+  }
+
+  profanityFilter = () => {
+    const filter = ['cake', 'pastry', 'biscuits', 'tea', 'chocolate', 'pie', 'cookies']
+    let i = 0;
+    let found = false;
+    while (i < filter.length)
+    {
+      console.log(i)
+      found = this.state.body.toLowerCase().includes(filter[i].toLowerCase());
+      if (found) {
+        break;
+      } else {
+        i++
+      }
+    }
+    return found;
+  }
 
   updateReview = async () => {
     const toSend = {
@@ -83,8 +100,12 @@ class EditReview extends Component {
   };
 
   updateButton() {
-    this.updateReview();
-    this.props.navigation.navigate('GetLocation');
+    if (this.profanityFilter()) {
+      ToastAndroid.show('You have used an inappropriate word!', ToastAndroid.SHORT)        
+    } else {
+      this.updateReview();
+      this.props.navigation.popToTop();
+    }
   }
 
   delete = async (review_id) => {
@@ -148,7 +169,6 @@ class EditReview extends Component {
       })
       .then(async (responseJson) => {
         console.log(responseJson);
-        this.props.navigation.navigate('Profile');
       })
       .catch((error) => {
         console.log(error);
@@ -158,11 +178,19 @@ class EditReview extends Component {
   
   deleteButton(location_id, review_id) {
     this.delete(location_id, review_id);
-    this.props.navigation.navigate('GetLocation');
+    this.props.navigation.popToTop();
   }
 
   render() {
     const navigation = this.props.navigation;
+    
+    const validateRatings = () => {
+      return (this.state.overall === null || this.state.price === null || this.state.quality === null || this.state.cleanliness === null)
+    }
+
+    const validateReview = () => {
+      return (this.state.body === '')
+    }
 
     return (
       <ScrollView style={styles.container}>
@@ -216,6 +244,9 @@ class EditReview extends Component {
             onFinishRating={(clenliness) => this.setState({clenliness})}
           />
         </View>
+        <HelperText style={styles.error} type='error' visible={validateRatings()}>
+          All ratings must be filled in.
+        </HelperText>
         <TextInput
           style={styles.body}
           mode="outlined"
@@ -224,6 +255,9 @@ class EditReview extends Component {
           onChangeText={(body) => this.setState({body})}
           value={this.state.body}
         />
+        <HelperText style={styles.error} type='error' visible={validateReview()}>
+          A comment must be included in a review.
+        </HelperText>  
         <Button
           mode="contained"
           style={styles.button}
@@ -241,7 +275,6 @@ class EditReview extends Component {
 const styles = StyleSheet.create({
   container: {
     padding: 16,
-    marginBottom: 8,
     marginLeft: 16,
     marginRight: 16,
   },

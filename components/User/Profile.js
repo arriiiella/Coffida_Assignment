@@ -98,31 +98,17 @@ class Profile extends Component {
           <Title style={styles.header}>
             Welcome Back {this.state.listData.first_name}!
           </Title>
-          <IconButton style={styles.delete} icon='account-cog' color="#721100" size={24} accessibilityLabel='Edit User' onPress={()=> navigation.navigate('EditUser', {
+          <Button style={styles.delete} icon='account-cog' color="#721100" size={24} accessibilityLabel='Edit User' onPress={()=> navigation.navigate('EditUser', {
              item: this.state.listData
-          })} />
-          <View>
-            <Button
-              style={styles.locations}
-              icon="heart"
-              color="#721100"
-              size={20}
-              accessibilityLabel='Favourite Locations'
-              onPress={()=> navigation.navigate('FaveLocations')}>Favourite Locations</Button>
-            <Button
-              style={styles.locations}
-              icon="thumb-up"
-              color="#721100"
-              size={20}
-              accessibilityLabel='Liked Reviews'
-              onPress={()=> this.returnLikedReviews()}>Liked Reviews</Button>
-          </View>
-          <Subheading>Reviews</Subheading>  
+          })} > Edit User Details </ Button>
+          <Subheading style={styles.subheading}>Reviews</Subheading>  
           <FlatList
             data={this.state.listData.reviews}
             renderItem={({item}) => (
               <View style={styles.reviewContainer}>
                 <Text>{item.location.location_name}</Text>
+                <Text>{item.review.review_id}</Text>
+                <Text>{item.location.location_id}</Text>
                 <Review text={'Overall: '} rating={item.review.overall_rating} />
                 <Review text={'Price: '} rating={item.review.price_rating} />
                 <Review text={'Quality: '} rating={item.review.quality_rating} />
@@ -157,6 +143,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 30,
     fontWeight: 'bold',
+  },
+
+  subheading: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    paddingBottom: 8
   },
 
   locations: {

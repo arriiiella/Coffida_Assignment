@@ -1,5 +1,12 @@
 import React, {Component} from 'react';
-import {TextInput, Button, Text, Portal, Modal} from 'react-native-paper';
+import {
+  TextInput, 
+  Button, 
+  Text, 
+  Portal, 
+  Modal,
+  HelperText
+} from 'react-native-paper';
 import {
   ScrollView,
   View,
@@ -22,6 +29,24 @@ class AddReview extends Component {
       cleanliness: null,
       body: '',
     };
+  }
+
+  
+  profanityFilter = () => {
+    const filter = ['cake', 'pastry', 'biscuits', 'tea', 'chocolate', 'pie', 'cookies']
+    let i = 0;
+    let found = false;
+    while (i < filter.length)
+    {
+      console.log(i)
+      found = this.state.body.toLowerCase().includes(filter[i].toLowerCase());
+      if (found) {
+        break;
+      } else {
+        i++
+      }
+    }
+    return found;
   }
 
   addReview = async () => {
@@ -52,8 +77,7 @@ class AddReview extends Component {
       .then((response) => {
         if (response.status === 201) {
           return response.json();
-          this.getData()
-          this.props.navigation.navigate('GetLocation');
+          ToastAndroid.show('Review Added', ToastAndroid.SHORT)
         } else if (response.status === 401) {
           ToastAndroid.show('Failed Validation', ToastAndroid.SHORT)
         } else {
@@ -65,43 +89,25 @@ class AddReview extends Component {
       });
   };
 
-  getData = async () => {
-    const token = await AsyncStorage.getItem('@session_token');
-    const location_id = parseInt(this.props.route.params.location_id);
-    return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id, {
-      headers: {
-        'X-Authorization': token,
-      },
-    })
-      .then((response) => {
-        if (response.status === 200) {
-          return response.json();
-        } else if (response.status === 401) {
-          ToastAndroid.show("You're not logged in", ToastAndroid.SHORT);
-          this.props.navigation.navigate('Login');
-        } else {
-          throw 'Something went wrong';
-        }
-        console.log('inside block');
-      })
-      .then((response) => {
-        this.setState({
-          isLoading: false,
-          locationData: response,
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
   addButton() {
-    this.addReview();
-    this.props.navigation.navigate('GetLocation');
+    if (this.profanityFilter()) {
+      ToastAndroid.show('You have used an inappropriate word!', ToastAndroid.SHORT)        
+    } else {
+      this.addReview();
+      this.props.navigation.popToTop();
+    }
   }
 
   render() {
     const navigation = this.props.navigation;
+
+    const validateRatings = () => {
+      return (this.state.overall === null || this.state.price === null || this.state.quality === null || this.state.cleanliness === null)
+    }
+
+    const validateReview = () => {
+      return (this.state.body === '')
+    }
 
     return (
       <ScrollView style={styles.container}>
@@ -150,6 +156,9 @@ class AddReview extends Component {
             onFinishRating={(cleanliness) => this.setState({cleanliness})}
           />
         </View>
+        <HelperText style={styles.error} type='error' visible={validateRatings()}>
+          All ratings must be filled in.
+        </HelperText>
         <TextInput
           style={styles.body}
           mode="outlined"
@@ -157,13 +166,16 @@ class AddReview extends Component {
           label="Review..."
           onChangeText={(body) => this.setState({body})}
           value={this.state.body}
-        />
+        /> 
+        <HelperText style={styles.error} type='error' visible={validateReview()}>
+          A comment must be included in a review.
+        </HelperText>  
         <Button
           mode="contained"
           style={styles.button}
           accessibilityLabel="Add Review"
           onPress={() => {
-            this.addReview();
+            this.addButton();
           }}>
           Add Review
         </Button>
@@ -209,6 +221,14 @@ const styles = StyleSheet.create({
   button: {
     margin: 32,
   },
+
+  error: {
+  paddingTop: 8,
+  marginBottom: 8,
+  marginLeft: -8,
+  fontSize: 12,
+  color: '#6F2A3B'
+  }
 });
 
 export default AddReview;
