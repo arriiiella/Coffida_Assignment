@@ -1,8 +1,8 @@
 import * as React from 'react'
-import { List } from 'react-native-paper'
+import { List, TextInput } from 'react-native-paper'
 import { AirbnbRating } from '../../react-native-ratings/src'
 
-const Filters = ({ overall, price, quality, cleanliness, search_in }) => {
+const Filters = ({ overall, price, quality, cleanliness, searchIn, limit }) => {
   const [expanded, setExpanded] = React.useState(false)
   const [expandedSub, setExpandedHub] = React.useState(false)
 
@@ -67,9 +67,16 @@ const Filters = ({ overall, price, quality, cleanliness, search_in }) => {
           expanded={expandedSub}
           onPress={handlePressSub}
         >
-          <List.Item title='Liked Reviews' onPress={(value) => search_in('reviewed')} />
-          <List.Item title='Favourited Locations' onPress={(value) => search_in('favourite')} />
+          <List.Item title='Liked Reviews' onPress={(value) => searchIn('reviewed')} />
+          <List.Item title='Favourited Locations' onPress={(value) => searchIn('favourite')} />
         </List.Accordion>
+      </List.Section>
+      <List.Section>
+        <TextInput
+          mode='outlined'
+          label='Limit...'
+          onChangeText={(value) => limit(value)}
+        />
       </List.Section>
     </List.Accordion>
   )

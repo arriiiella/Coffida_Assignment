@@ -19,6 +19,9 @@ class FindLocations extends Component {
     this.state = {
       isLoading: true,
       isVisible: false,
+      loadingExtraData: false,
+      page:1,
+      limit: null,
       listData: [],
       location_id: '',
       query: '',
@@ -27,6 +30,7 @@ class FindLocations extends Component {
       quality: null,
       cleanliness: null,
       search_in: ''
+
     }
 
     this.handleOverall = this.handleOverall.bind(this)
@@ -34,6 +38,7 @@ class FindLocations extends Component {
     this.handleQuality = this.handleQuality.bind(this)
     this.handleCleanliness = this.handleCleanliness.bind(this)
     this.handleSearchIn = this.handleSearchIn.bind(this)
+    this.handleLimit = this.handleLimit.bind(this)
   }
 
   handleOverall(value){ this.setState({overall: value})}
@@ -41,48 +46,20 @@ class FindLocations extends Component {
   handleQuality(value){ this.setState({quality: value}) }
   handleCleanliness(value){ this.setState({cleanliness: value}) }
   handleSearchIn(value){ this.setState({search_in: value}) }
+  handleLimit(value){ this.setState({limit: value}) }
 
   componentDidMount () {
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
       LoggedIn()
     })
 
-    this.getData()
+    this.searchData()
     this.setState({isVisible: false})
   }
 
   componentWillUnmount () {
     this.unsubscribe()
   }
-
-  getData = async () => {
-    const token = await AsyncStorage.getItem('@session_token');
-    return fetch('http://10.0.2.2:3333/api/1.0.0/find', {
-      headers: {
-        'X-Authorization': token,
-      },
-    })
-      .then((response) => {
-        if (response.status === 200) {
-          return response.json();
-        } else if (response.status === 401) {
-          ToastAndroid.show("You're not logged in", ToastAndroid.SHORT);
-          this.props.navigation.navigate('Login');
-        } else {
-          throw 'Something went wrong';
-        }
-        console.log('inside block');
-      })
-      .then((response) => {
-        this.setState({
-          isLoading: false,
-          listData: response,
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
 
   searchData = async () => {
     let url = 'http://10.0.2.2:3333/api/1.0.0/find?'
@@ -112,6 +89,10 @@ class FindLocations extends Component {
       url += 'search_in=' + this.state.search_in + '&'
     }
 
+    if(this.state.limit > 0) {
+      url += 'limit=' + this.state.limit + '&'
+    }
+
     return fetch(url, {
       headers: {
         'X-Authorization': token,
@@ -131,7 +112,7 @@ class FindLocations extends Component {
       .then((response) => {
         this.setState({
           isLoading: false,
-          listData: response,
+          listData: this.state.page === 1 ? response : [...this.state.listData, ...response]
         });
       })
       .catch((error) => {
@@ -191,6 +172,12 @@ class FindLocations extends Component {
       })
   }
 
+  LoadMoreLocations = () => {
+    this.setState({
+      page:this.state.page+1
+    },()=>this.searchData())
+  }
+
   render () {
     if (this.state.isLoading) {
       return (
@@ -211,8 +198,8 @@ class FindLocations extends Component {
             onChangeText={(query) => this.setState({query})}
             value={this.state.query}
           />
-          <Filters overall={this.handleOverall} price={this.handlePrice} quality={this.handleQuality} cleanliness={this.handleCleanliness} search_in={this.handleSearchIn}/>
-          {console.log(this.state.search_in)}
+          <Filters overall={this.handleOverall} price={this.handlePrice} quality={this.handleQuality} cleanliness={this.handleCleanliness} search_in={this.handleSearchIn} limit={this.handleLimit}/>
+          {console.log(this.state.limit)}
           <Button mode='contained' accessibilityLabel='Search Locations'onPress={() => this.searchData()}>Search</Button>
           <FlatList
             data={this.state.listData}
@@ -231,7 +218,7 @@ class FindLocations extends Component {
                 {this.state.isFavourited ? <IconButton style={styles.like} icon='heart' color="#6F2A3B" size={16} accessibilityLabel='Unfavourite a location' onPress={()=>this.unfavourite(item.location_id)} /> : <IconButton style={styles.like} icon='heart-outline' color="#6F2A3B" size={16} accessibilityLabel='Favourite a location' onPress={()=>this.favourite(item.location_id)} />}
               </TouchableOpacity>
             )}
-            keyExtractor={(item, index) => item.location_id.toString()}
+            keyExtractor={(item, index) => item.location_id.toString()} onEndReachedThreshold={0} onEndReached={this.LoadMoreLocations}
           />
         </View>
       )
