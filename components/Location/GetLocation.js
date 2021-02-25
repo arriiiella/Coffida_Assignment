@@ -151,8 +151,7 @@ class GetLocation extends Component {
   }
 
   render() {
-    const {searchQuery, setSearchQuery} = this.state;
-    const onChangeSearch = (query) => setSearchQuery(query);
+    const navigation = this.props.navigation;
 
     if (this.state.isLoading) {
       return (
@@ -172,7 +171,8 @@ class GetLocation extends Component {
             <Title style={styles.header}>
               {this.state.locationData.location_name}
             </Title>
-            <Subheading style={styles.subheading}>Location : {this.state.locationData.location_town}</Subheading>
+            <Subheading style={styles.subheading}>{this.state.locationData.location_town}</Subheading>
+            <Image source={{uri: this.state.locationData.photo_path}} />
             <FAB
             style={styles.fab}
             medium
@@ -180,7 +180,7 @@ class GetLocation extends Component {
             color="#6F2A3B"
             accessibilityLabel="Add Review"
             onPress={() =>
-              this.props.navigation.navigate('AddReview', {
+              navigation.navigate('AddReview', {
                 location_id: this.state.locationData.location_id,
               })
             }
@@ -232,6 +232,7 @@ const styles = StyleSheet.create({
   subheading: {
     fontSize: 24,
     fontWeight: 'bold',
+    paddingBottom: 8
   },
 
   activity: {

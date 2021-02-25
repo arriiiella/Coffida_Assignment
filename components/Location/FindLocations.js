@@ -179,6 +179,8 @@ class FindLocations extends Component {
   }
 
   render () {
+    const navigation = this.props.navigation;
+
     if (this.state.isLoading) {
       return (
         <View style={styles.container}>
@@ -207,7 +209,7 @@ class FindLocations extends Component {
               <TouchableOpacity
                 style={styles.locationContainer}
                 onPress={() =>
-                  this.props.navigation.navigate('GetLocation', {
+                  navigation.navigate('GetLocation', {
                     location_id: item.location_id,      
                   })
                 }>
@@ -230,7 +232,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 16,
     marginLeft: 16,
-    marginRight: 16
+    marginRight: 16,
   },
 
   header: {

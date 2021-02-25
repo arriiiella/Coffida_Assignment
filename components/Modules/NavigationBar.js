@@ -1,28 +1,10 @@
 import React from 'react'
 import { Appbar, Menu } from 'react-native-paper'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const CustomNavigationBar = ({ navigation, previous }) => {
   const [visible, setVisible] = React.useState(false)
   const openMenu = () => setVisible(true)
   const closeMenu = () => setVisible(false)
-
-  componentDidMount = () => {
-    this.unsubscribe = this.props.navigation.addListener('focus', () => {
-      this.loggedIn()
-    })
-  }
-
-  componentWillUnmount = () => {
-    this.unsubscribe()
-  }
-
-  loggedIn = async () => {
-    const token = await AsyncStorage.getItem('@session_token')
-    if (token == null) {
-      this.props.navigation.navigate('Login')
-    }
-  }
 
   return (
     <Appbar.Header>
