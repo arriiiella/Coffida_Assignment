@@ -51,10 +51,6 @@ const CustomNavigationBar = ({ navigation, previous }) => {
         />
       </Menu>
       <Appbar.Content title='Coffida' />
-      <Appbar.Action
-        icon='magnify'
-        onPress={() => navigation.navigate('FindLocations')}
-      />
     </Appbar.Header>
   )
 }
