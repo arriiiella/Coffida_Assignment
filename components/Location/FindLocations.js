@@ -26,18 +26,21 @@ class FindLocations extends Component {
       price: null,
       quality: null,
       cleanliness: null,
+      search_in: ''
     }
 
     this.handleOverall = this.handleOverall.bind(this)
     this.handlePrice = this.handlePrice.bind(this)
     this.handleQuality = this.handleQuality.bind(this)
     this.handleCleanliness = this.handleCleanliness.bind(this)
+    this.handleSearchIn = this.handleSearchIn.bind(this)
   }
 
   handleOverall(value){ this.setState({overall: value})}
   handlePrice(value){ this.setState({price: value}) }
   handleQuality(value){ this.setState({quality: value}) }
   handleCleanliness(value){ this.setState({cleanliness: value}) }
+  handleSearchIn(value){ this.setState({search_in: value}) }
 
   componentDidMount () {
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
@@ -103,6 +106,10 @@ class FindLocations extends Component {
 
     if(this.state.cleanliness > 0){
       url += 'clenliness_rating=' + this.state.cleanliness + '&'
+    }
+
+    if(this.state.search_in != '') {
+      url += 'search_in=' + this.state.search_in + '&'
     }
 
     return fetch(url, {
@@ -204,9 +211,9 @@ class FindLocations extends Component {
             onChangeText={(query) => this.setState({query})}
             value={this.state.query}
           />
-          <Filters overall={this.handleOverall} price={this.handlePrice} quality={this.handleQuality} cleanliness={this.handleCleanliness}/>
-          {console.log(this.state.overall)}
-          <Button mode='contained' onPress={() => this.searchData()}>Search</Button>
+          <Filters overall={this.handleOverall} price={this.handlePrice} quality={this.handleQuality} cleanliness={this.handleCleanliness} search_in={this.handleSearchIn}/>
+          {console.log(this.state.search_in)}
+          <Button mode='contained' accessibilityLabel='Search Locations'onPress={() => this.searchData()}>Search</Button>
           <FlatList
             data={this.state.listData}
             renderItem={({item}) => (
@@ -221,7 +228,7 @@ class FindLocations extends Component {
                   {item.location_name}
                 </Text>
                <RatingRead text={''} rating={parseInt(item.avg_overall_rating)} size={20} disabled={true}/>
-                {this.state.isFavourited ? <IconButton style={styles.like} icon='heart' color="#7a1f1f" size={16} onPress={()=>this.unfavourite(item.location_id)} /> : <IconButton style={styles.like} icon='heart-outline' color="#7a1f1f" size={16} onPress={()=>this.favourite(item.location_id)} />}
+                {this.state.isFavourited ? <IconButton style={styles.like} icon='heart' color="#6F2A3B" size={16} accessibilityLabel='Unfavourite a location' onPress={()=>this.unfavourite(item.location_id)} /> : <IconButton style={styles.like} icon='heart-outline' color="#6F2A3B" size={16} accessibilityLabel='Favourite a location' onPress={()=>this.favourite(item.location_id)} />}
               </TouchableOpacity>
             )}
             keyExtractor={(item, index) => item.location_id.toString()}
