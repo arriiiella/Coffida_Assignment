@@ -51,6 +51,16 @@ const CustomNavigationBar = ({ navigation, previous }) => {
         />
       </Menu>
       <Appbar.Content title='Coffida' />
+      <Appbar.Action
+        icon='heart-outline' accessibilityLabel='Favourite Locations' onPress={() => {
+          navigation.navigate('FaveLocations')
+        }}
+      />
+      <Appbar.Action
+        icon='thumb-up-outline' accessibilityLabel='Liked Reviews' onPress={() => {
+          navigation.navigate('LikedReviews')
+        }}
+      />
     </Appbar.Header>
   )
 }

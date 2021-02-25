@@ -17,7 +17,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import RatingRead from '../Modules/RatingRead';
 import Review from '../Modules/Review';
 
-class Profile extends Component {
+class LikedReviews extends Component {
   constructor(props) {
     super(props);
 
@@ -79,12 +79,14 @@ class Profile extends Component {
   };
 
   render() {
+    const {email, password} = this.state;
+
     const navigation = this.props.navigation;
 
     if (this.state.isLoading) {
       return (
         <View style={styles.container}>
-          <Headline style={styles.header}>Loading Profile...</Headline>
+          <Headline style={styles.header}>Loading Liked Reviews...</Headline>
           <ActivityIndicator
             animating={true}
             style={styles.activity}
@@ -96,45 +98,21 @@ class Profile extends Component {
       return (
         <View style={styles.container}>
           <Title style={styles.header}>
-            Welcome Back {this.state.listData.first_name}!
+            Liked Reviews
           </Title>
-          <IconButton style={styles.delete} icon='account-cog' color="#721100" size={24} accessibilityLabel='Edit User' onPress={()=> navigation.navigate('EditUser', {
-             item: this.state.listData
-          })} />
-          <View>
-            <Button
-              style={styles.locations}
-              icon="heart"
-              color="#721100"
-              size={20}
-              accessibilityLabel='Favourite Locations'
-              onPress={()=> navigation.navigate('FaveLocations')}>Favourite Locations</Button>
-            <Button
-              style={styles.locations}
-              icon="thumb-up"
-              color="#721100"
-              size={20}
-              accessibilityLabel='Liked Reviews'
-              onPress={()=> this.returnLikedReviews()}>Liked Reviews</Button>
-          </View>
-          <Subheading>Reviews</Subheading>  
+          {console.log(this.state.listData.liked_reviews.review)}
           <FlatList
-            data={this.state.listData.reviews}
+            data={this.state.listData.liked_reviews.review}
             renderItem={({item}) => (
               <View style={styles.reviewContainer}>
-                <Text>{item.location.location_name}</Text>
-                <Review text={'Overall: '} rating={item.review.overall_rating} />
-                <Review text={'Price: '} rating={item.review.price_rating} />
-                <Review text={'Quality: '} rating={item.review.quality_rating} />
-                <Review text={'Cleanliness: '} rating={item.review.clenliness_rating} />
-                <Review text={''} rating={item.review.review_body} />       
-                <IconButton style={styles.edit} icon='pencil' color="#721100" accessibilityLabel='Edit Review' size={16} onPress={()=> this.props.navigation.navigate('EditReview', {
-                  item: item, 
-                })} />
-                <Text>Likes: {item.review.likes}</Text>         
+                <Review text={'Overall: '} rating={item.overall_rating} />
+                <Review text={'Price: '} rating={item.price_rating} />
+                <Review text={'Quality: '} rating={item.quality_rating} />
+                <Review text={'Cleanliness: '} rating={item.clenliness_rating} />
+                <Review text={''} rating={item.review_body} />
               </View>
             )}
-            keyExtractor={(item, index) => item.review.review_id.toString()}
+            keyExtractor={(item, index) => item.review_id.toString()}
           />
         </View>
       );
@@ -185,4 +163,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Profile;
+export default LikedReviews;
