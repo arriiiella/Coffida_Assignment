@@ -104,7 +104,7 @@ class EditUser extends Component {
         <Button
           style={styles.buttonContainer}
           mode='contained'
-          accessibilityLabel='Update'
+          accessibilityLabel='Update User'
           onPress={() => this.updateButton()}
         >
           Update

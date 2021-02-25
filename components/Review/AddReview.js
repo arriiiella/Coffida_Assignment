@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AirbnbRating } from '../../react-native-ratings/src';
-import PopUp from '../Modules/PopUp'
 
 class AddReview extends Component {
   constructor(props) {
@@ -110,7 +109,7 @@ class AddReview extends Component {
         <View style={styles.rating}>
           <Text style={styles.title}>Overall</Text>
           <AirbnbRating
-            selectedColor={'#7a1f1f'}
+            selectedColor={'#6F2A3B'}
             reviewSize={16}
             size={32}
             showRating={false}
@@ -121,7 +120,7 @@ class AddReview extends Component {
         <View style={styles.rating}>
           <Text style={styles.title}>Price</Text>
           <AirbnbRating
-            selectedColor={'#7a1f1f'}
+            selectedColor={'#6F2A3B'}
             reviewSize={16}
             size={32}
             showRating={false}
@@ -132,7 +131,7 @@ class AddReview extends Component {
         <View style={styles.rating}>
           <Text style={styles.title}>Quality</Text>
           <AirbnbRating
-            selectedColor={'#7a1f1f'}
+            selectedColor={'#6F2A3B'}
             reviewSize={16}
             size={32}
             showRating={false}
@@ -143,7 +142,7 @@ class AddReview extends Component {
         <View style={styles.rating}>
           <Text style={styles.title}>Cleanliness</Text>
           <AirbnbRating
-            selectedColor={'#7a1f1f'}
+            selectedColor={'#6F2A3B'}
             reviewSize={16}
             size={32}
             showRating={false}

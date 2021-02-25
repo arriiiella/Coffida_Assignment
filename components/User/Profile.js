@@ -9,13 +9,13 @@ import {
   Text, 
   Divider,
   Title,
-  Headline
+  Headline,
+  Subheading
 } from 'react-native-paper';
 import {View, StyleSheet, ToastAndroid, FlatList} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RatingRead from '../Modules/RatingRead';
 import Review from '../Modules/Review';
-
 
 class Profile extends Component {
   constructor(props) {
@@ -78,36 +78,6 @@ class Profile extends Component {
       });
   };
 
-  searchData = async (q) => {
-    const token = await AsyncStorage.getItem('@session_token');
-    console.log(q)
-    return fetch('http://10.0.2.2:3333/api/1.0.0/find?q=search_in=' + q, {
-      headers: {
-        'X-Authorization': token,
-      },
-    })
-      .then((response) => {
-        if (response.status === 200) {
-          return response.json();
-        } else if (response.status === 401) {
-          ToastAndroid.show("You're not logged in", ToastAndroid.SHORT);
-          this.props.navigation.navigate('Login');
-        } else {
-          throw 'Something went wrong';
-        }
-        console.log('inside block');
-      })
-      .then((response) => {
-        this.setState({
-          isLoading: false,
-          listData: response,
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
-
   render() {
     const {email, password} = this.state;
 
@@ -130,23 +100,26 @@ class Profile extends Component {
           <Title style={styles.header}>
             Welcome Back {this.state.listData.first_name}!
           </Title>
-          <IconButton style={styles.delete} icon='account-cog' color="#7a1f1f" size={24} onPress={()=> this.props.navigation.navigate('EditUser', {
+          <IconButton style={styles.delete} icon='account-cog' color="#721100" size={24} accessibilityLabel='Edit User' onPress={()=> this.props.navigation.navigate('EditUser', {
              item: this.state.listData
-          })} />     
+          })} />
           <View>
             <Button
               style={styles.locations}
               icon="heart"
-              color="#7a1f1f"
+              color="#721100"
               size={20}
-              onPress={()=> this.searchData('favourite')}>Fave Locations</Button>
+              accessibilityLabel='Favourite Locations'
+              onPress={()=> this.returnLikedReviews()}>Favourite Locations</Button>
             <Button
               style={styles.locations}
               icon="thumb-up"
-              color="#7a1f1f"
+              color="#721100"
               size={20}
-              onPress={()=> this.searchData('reviewed')}>Liked Reviews</Button>
+              accessibilityLabel='Liked Reviews'
+              onPress={()=> this.returnLikedReviews()}>Liked Reviews</Button>
           </View>
+          <Subheading>Reviews</Subheading>  
           <FlatList
             data={this.state.listData.reviews}
             renderItem={({item}) => (
@@ -157,7 +130,7 @@ class Profile extends Component {
                 <Review text={'Quality: '} rating={item.review.quality_rating} />
                 <Review text={'Cleanliness: '} rating={item.review.clenliness_rating} />
                 <Review text={''} rating={item.review.review_body} />       
-                <IconButton style={styles.edit} icon='pencil' color="#7a1f1f" size={16} onPress={()=> this.props.navigation.navigate('EditReview', {
+                <IconButton style={styles.edit} icon='pencil' color="#721100" accessibilityLabel='Edit Review' size={16} onPress={()=> this.props.navigation.navigate('EditReview', {
                   item: item, 
                 })} />
                 <Text>Likes: {item.review.likes}</Text>         
@@ -202,6 +175,7 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     borderColor: '#a9a9a9',
     paddingBottom: 8,
+    paddingLeft: 8,
     paddingTop: 8,
     alignContent: 'center',
     justifyContent: 'center',

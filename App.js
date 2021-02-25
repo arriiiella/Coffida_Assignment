@@ -19,17 +19,18 @@ import FaveLocationsScreen from './components/Location/FaveLocations'
 
 import AddReviewScreen from './components/Review/AddReview'
 import EditReviewScreen from './components/Review/EditReview'
-import PhotoScreen from './components/Review/Photo'
+import TakePhotoScreen from './components/Review/TakePhoto'
 
-import CustomNavigationBar from './components/Modules/NavigationBar'
+import NavBar from './components/Modules/NavigationBar'
 
 const theme = {
   ...DefaultTheme,
   roundness: 2,
   colors: {
     ...DefaultTheme.colors,
-    primary: '#7a1f1f',
-    accent: '#F8F8F8'
+    primary: '#6F2A3B',
+    accent: '#C3B9B5',
+    background: '#C3B9B5'
   }
 }
 
@@ -41,9 +42,9 @@ class App extends Component {
       <PaperProvider theme={theme}>
         <NavigationContainer>
           <Stack.Navigator
-            initialRouteName='Locations'
+            initialRouteName='Profile'
             screenOptions={{
-              header: (props) => <CustomNavigationBar {...props} />
+              header: (props) => <NavBar {...props} />
             }}
           >
             <Stack.Screen name='Profile' component={ProfileScreen} />
@@ -55,8 +56,8 @@ class App extends Component {
             <Stack.Screen name='FindLocations' component={FindLocationsScreen} />
             <Stack.Screen name='GetLocation' component={GetLocationScreen} />
             <Stack.Screen name='EditUser' component={EditUserScreen} />
+            <Stack.Screen name='TakePhoto' component={TakePhotoScreen} />
             <Stack.Screen name='FaveLocations' component={FaveLocationsScreen} />
-            <Stack.Screen name='Photo' component={PhotoScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </PaperProvider>

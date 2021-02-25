@@ -5,6 +5,7 @@ import {
   FlatList,
   ToastAndroid,
   TouchableOpacity,
+  Image,
 } from 'react-native';
 import {TextInput, Text, Headline, Title, Subheading, ActivityIndicator, FAB, Divider, IconButton} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -19,6 +20,7 @@ class GetLocation extends Component {
       isLoading: true,
       locationData: [],
       isLiked: false,
+      uri: '',
     };
   }
 
@@ -32,6 +34,30 @@ class GetLocation extends Component {
 
   componentWillUnmount() {
     this.unsubscribe();
+  }
+
+  getPhoto = async (review_id) => {
+    const token = await AsyncStorage.getItem('@session_token');
+    const location_id = this.props.route.params.location_id;
+    return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/review/' + review_id + '/photo', {
+      headers: {
+        'X-Authorization': token,
+      },
+    })
+      .then((response) => {
+        if (response.status === 200) {
+          return response;
+          console.log(response)
+        } else if (response.status === 401) {
+          ToastAndroid.show("You're not logged in", ToastAndroid.SHORT);
+          this.props.navigation.navigate('Login');
+        } else {
+          throw 'Something went wrong';
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   getData = async () => {
@@ -146,11 +172,12 @@ class GetLocation extends Component {
             <Title style={styles.header}>
               {this.state.locationData.location_name}
             </Title>
+            <Subheading style={styles.subheading}>Location : {this.state.locationData.location_town}</Subheading>
             <FAB
             style={styles.fab}
             medium
             icon="plus"
-            color="#7a1f1f"
+            color="#6F2A3B"
             accessibilityLabel="Add Review"
             onPress={() =>
               this.props.navigation.navigate('AddReview', {
@@ -162,7 +189,7 @@ class GetLocation extends Component {
             <RatingRead text={'Price'} rating={parseInt(this.state.locationData.avg_price_rating)} size={20} />
             <RatingRead text={'Quality'} rating={parseInt(this.state.locationData.avg_quality_rating)} size={20} />
             <RatingRead text={'Cleanliness'} rating={parseInt(this.state.locationData.avg_clenliness_rating)} size={20} />
-            <Subheading style={styles.h2}>Reviews</Subheading>
+            <Subheading style={styles.subheading}>Reviews</Subheading>
             <FlatList
             data={this.state.locationData.location_reviews}
             renderItem={({item}) => (
@@ -172,7 +199,8 @@ class GetLocation extends Component {
                 <Review text={'Quality: '} rating={item.quality_rating} />
                 <Review text={'Cleanliness: '} rating={item.clenliness_rating} />
                 <Review text={''} rating={item.review_body} />
-                {this.state.isLiked ? <IconButton style={styles.like} icon='thumb-up' color="#7a1f1f" size={16} onPress={()=>this.unlike(item.review_id)} /> : <IconButton style={styles.like} icon='thumb-up-outline' color="#7a1f1f" size={16} onPress={()=>this.like(item.review_id)} />}
+                {/* <Image source={() => this.getPhoto(item.review_id)}/> */}
+                {this.state.isLiked ? <IconButton style={styles.like} icon='thumb-up' color="#6F2A3B" size={16} accessibilityLabel='Unlike a Review' onPress={()=>this.unlike(item.review_id)} /> : <IconButton style={styles.like} icon='thumb-up-outline' color="#6F2A3B" size={16} accessibilityLabel='Like a Review' onPress={()=>this.like(item.review_id)} />}
                 <Text>{item.likes}</Text>
                 <Divider />
               </View>
@@ -201,17 +229,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 
-  h2: {
-    fontSize: 24
+  subheading: {
+    fontSize: 24,
+    fontWeight: 'bold',
   },
 
   activity: {
     paddingTop: 150,
-  },
-
-  locationDetails: {
-    fontSize: 16,
-    justifyContent: 'center',
   },
 
   reviewContainer: {
@@ -234,7 +258,7 @@ const styles = StyleSheet.create({
     margin: 16,
     right: 0,
     top: 0,
-    color: '#7a1f1f',
+    color: '#6F2A3B',
   },
 });
 

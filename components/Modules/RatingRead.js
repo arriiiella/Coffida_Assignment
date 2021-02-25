@@ -7,7 +7,7 @@ const Rating = ({ text, rating, size }) => {
     <View>
       <Text style={styles.text}>{text}</Text>
       <AirbnbRating
-        selectedColor='#7a1f1f'
+        selectedColor='#6F2A3B'
         size={size}
         defaultRating={rating}
         isDisabled
@@ -30,7 +30,8 @@ const styles = StyleSheet.create({
 
   text: {
     fontSize: 16,
-    justifyContent: 'center'
+    justifyContent: 'center',
+    fontWeight: 'bold'
   }
 })
 export default Rating

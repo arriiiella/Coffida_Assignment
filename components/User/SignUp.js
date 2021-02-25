@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     marginLeft: -8,
     fontSize: 12,
-    color: '#7a1f1f'
+    color: '#6F2A3B'
   }
 })
 

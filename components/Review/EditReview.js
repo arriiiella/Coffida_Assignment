@@ -15,6 +15,7 @@ class EditReview extends Component {
     super(props);
 
     this.state = {
+      hasPhoto: false,
       overall: this.props.route.params.item.review.overall_rating,
       price: this.props.route.params.item.review.price_rating,
       quality: this.props.route.params.item.review.quality_rating,
@@ -22,6 +23,23 @@ class EditReview extends Component {
       body: this.props.route.params.item.review.review_body,
     };
   }
+
+  componentDidMount() {
+    this.unsubscribe = this.props.navigation.addListener('focus', () => {
+      this.loggedIn();
+    });
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe();
+  }
+
+  loggedIn = async () => {
+    const token = await AsyncStorage.getItem('@session_token');
+    if (token == null) {
+      this.props.navigation.navigate('Login');
+    }
+  };
 
   updateReview = async () => {
     const toSend = {
@@ -70,21 +88,27 @@ class EditReview extends Component {
   }
 
   delete = async (review_id) => {
-  const token = await AsyncStorage.getItem('@session_token');
-  const location_id = this.props.route.params.item.location.location_id;
-  console.log(review_id, location_id)
-  return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/review/' + review_id, {
-    method: 'delete',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Authorization': token,
-    },
-    body: JSON.stringify(this.state),
-  })
+    const toSend = {
+      overall_rating: this.state.overall,
+      price_rating: this.state.price,
+      quality_rating: this.state.quality,
+      clenliness_rating: this.state.clenliness,
+      review_body: this.state.body,
+    };
+    const token = await AsyncStorage.getItem('@session_token');
+    console.log(review_id, location_id)
+    return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/review/' + review_id, {
+      method: 'delete',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Authorization': token,
+      },
+      body: JSON.stringify(toSend),
+    })
     .then((response) => {
       if (response.status === 200) {
         return response.json();
-        this.getData();
+        ToastAndroid.show("Review Deleted!", ToastAndroid.SHORT);  
       } else if (response.status === 401) {
         ToastAndroid.show("You're not logged in", ToastAndroid.SHORT);
         this.props.navigation.navigate('Login');
@@ -94,48 +118,48 @@ class EditReview extends Component {
     })
     .then(async (responseJson) => {
       console.log(responseJson);
-      this.props.navigation.navigate('GetLocation');
+      this.props.navigation.navigate('Profile');
     })
     .catch((error) => {
       console.log(error);
     });
   }
 
-  
-  deleteButton(review_id) {
-    this.delete(review_id);
-    this.props.navigation.navigate('GetLocation');
-  }
-
-  getData = async () => {
+  deletePhoto = async (location_id, review_id) => {
     const token = await AsyncStorage.getItem('@session_token');
-    const location_id = parseInt(this.props.route.params.location_id);
-    return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id, {
+    console.log(review_id, location_id)
+    return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/review/' + review_id + '/photo/', {
+      method: 'delete',
       headers: {
+        'Content-Type': 'application/json',
         'X-Authorization': token,
       },
     })
       .then((response) => {
         if (response.status === 200) {
           return response.json();
+          ToastAndroid.show("Photo Deleted!", ToastAndroid.SHORT);  
         } else if (response.status === 401) {
           ToastAndroid.show("You're not logged in", ToastAndroid.SHORT);
           this.props.navigation.navigate('Login');
         } else {
-          throw 'Something went wrong';
+          ToastAndroid.show("Something went wrong", ToastAndroid.SHORT);
         }
-        console.log('inside block');
       })
-      .then((response) => {
-        this.setState({
-          isLoading: false,
-          locationData: response,
-        });
+      .then(async (responseJson) => {
+        console.log(responseJson);
+        this.props.navigation.navigate('Profile');
       })
       .catch((error) => {
         console.log(error);
       });
-  };
+  }
+
+  
+  deleteButton(location_id, review_id) {
+    this.delete(location_id, review_id);
+    this.props.navigation.navigate('GetLocation');
+  }
 
   render() {
     const navigation = this.props.navigation;
@@ -144,13 +168,14 @@ class EditReview extends Component {
       <ScrollView style={styles.container}>
         <View style={styles.upperContainer}>
           <Text style={styles.header}>Update Review</Text>
-          <IconButton style={styles.delete} icon='delete' color="#7a1f1f" size={24} onPress={()=>this.deleteButton(this.props.route.params.item.review.review_id)}/>
+          <IconButton style={styles.delete} icon='delete' color="#6F2A3B" size={24} accessibilityLabel='Delete Review' onPress={()=>this.deleteButton(this.props.route.params.item.location.location_id, this.props.route.params.item.review.review_id)}/>
         </View>
-        <Button icon='camera' color="#7a1f1f" size={24} onPress={()=> navigation.navigate('Photo')}> Add a Photo </Button>
+        {this.state.hasPhoto ? <Button  icon='delete' color="#6F2A3B" size={24} accessibilityLabel='Delete Photo' onPress={()=> this.deletePhoto(this.props.route.params.location_id, review_id, this.props.route.params.item.review.review_id)}>Delete Photo</Button> : <Button icon='camera' color="#6F2A3B" size={24} accessibilityLabel='Take a Photo' onPress={()=> this.props.navigation.navigate('EditReview', {location_id: this.props.route.params.location_id, review_id: this.props.route.params.item.review.review_id})}> Take a Photo </Button>}
+
         <View style={styles.rating}>
           <Text style={styles.title}>Overall</Text>
           <AirbnbRating
-            selectedColor={'#7a1f1f'}
+            selectedColor={'#6F2A3B'}
             reviewSize={16}
             size={32}
             defaultRating={this.props.route.params.item.review.overall_rating}
@@ -161,7 +186,7 @@ class EditReview extends Component {
         <View style={styles.rating}>
           <Text style={styles.title}>Price</Text>
           <AirbnbRating
-            selectedColor={'#7a1f1f'}
+            selectedColor={'#6F2A3B'}
             reviewSize={16}
             size={32}
             defaultRating={this.props.route.params.item.review.price_rating}
@@ -172,7 +197,7 @@ class EditReview extends Component {
         <View style={styles.rating}>
           <Text style={styles.title}>Quality</Text>
           <AirbnbRating
-            selectedColor={'#7a1f1f'}
+            selectedColor={'#6F2A3B'}
             reviewSize={16}
             size={32}
             defaultRating={this.props.route.params.item.review.quality_rating}
@@ -183,7 +208,7 @@ class EditReview extends Component {
         <View style={styles.rating}>
           <Text style={styles.title}>Cleanliness</Text>
           <AirbnbRating
-            selectedColor={'#7a1f1f'}
+            selectedColor={'#6F2A3B'}
             reviewSize={16}
             size={32}
             defaultRating={this.props.route.params.item.review.clenliness_rating}
