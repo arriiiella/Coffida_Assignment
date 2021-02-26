@@ -46,6 +46,11 @@ const CustomNavigationBar = ({ navigation, previous }) => {
           navigation.navigate('LikedReviews')
         }}
       />
+      <Appbar.Action
+        icon='map-marker-outline' accessibilityLabel='Locations Near Me' onPress={() => {
+          navigation.navigate('NearLocations')
+        }}
+      />
     </Appbar.Header>
   )
 }

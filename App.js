@@ -16,6 +16,7 @@ import EditUserScreen from './components/User/EditUser'
 import GetLocationScreen from './components/Location/GetLocation'
 import FindLocationsScreen from './components/Location/FindLocations'
 import FaveLocationsScreen from './components/Location/FaveLocations'
+import NearLocationsScreen from './components/Location/NearLocations'
 
 import AddReviewScreen from './components/Review/AddReview'
 import EditReviewScreen from './components/Review/EditReview'
@@ -60,6 +61,7 @@ class App extends Component {
             <Stack.Screen name='TakePhoto' component={TakePhotoScreen} />
             <Stack.Screen name='FaveLocations' component={FaveLocationsScreen} />
             <Stack.Screen name='LikedReviews' component={LikedReviewsScreen} />
+            <Stack.Screen name='NearLocations' component={NearLocationsScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </PaperProvider>
