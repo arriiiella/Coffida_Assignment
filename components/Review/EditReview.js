@@ -109,7 +109,7 @@ class EditReview extends Component {
     }
   }
 
-  delete = async (review_id) => {
+  delete = async () => {
     const toSend = {
       overall_rating: this.state.overall,
       price_rating: this.state.price,
@@ -117,8 +117,9 @@ class EditReview extends Component {
       clenliness_rating: this.state.clenliness,
       review_body: this.state.body,
     };
+    const location_id = this.props.route.params.item.location.location_id;
+    const review_id = this.props.route.params.item.review.review_id;
     const token = await AsyncStorage.getItem('@session_token');
-    console.log(review_id, location_id)
     return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/review/' + review_id, {
       method: 'delete',
       headers: {
@@ -205,9 +206,9 @@ class EditReview extends Component {
   }
 
   
-  deleteButton(location_id, review_id) {
+  deleteButton() {
     // delete review then go back to profile
-    this.delete(location_id, review_id);
+    this.delete();
     this.props.navigation.popToTop();
   }
 
