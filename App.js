@@ -48,9 +48,9 @@ class App extends Component {
               header: (props) => <NavBar {...props} />
             }}
           >
-            <Stack.Screen name='Profile' component={ProfileScreen} />
             <Stack.Screen name='Login' component={LoginScreen} />
             <Stack.Screen name='SignUp' component={SignUpScreen} />
+            <Stack.Screen name='Profile' component={ProfileScreen} />
             <Stack.Screen name='Logout' component={LogoutScreen} />
             <Stack.Screen name='AddReview' component={AddReviewScreen} />
             <Stack.Screen name='EditReview' component={EditReviewScreen} />

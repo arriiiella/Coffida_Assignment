@@ -134,13 +134,6 @@ const styles = StyleSheet.create({
     marginLeft: 120,
     marginRight: 120
   },
-
-  signUp: {
-    fontSize: 16,
-    marginTop: 16,
-    marginLeft: 16,
-    display: 'flex'
-  }
 })
 
 export default EditUser

@@ -151,15 +151,6 @@ const styles = StyleSheet.create({
     paddingBottom: 8
   },
 
-  locations: {
-    paddingTop: 24,
-    marginLeft: 24,
-  },
-
-  reviews: {
-    marginTop: 38,
-  },
-
   reviewContainer: {
     backgroundColor: '#D8D8D8',
     borderStyle: 'solid',
@@ -169,11 +160,6 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     alignContent: 'center',
     justifyContent: 'center',
-  },
-
-    edit: {
-    flex: 1,
-    justifyContent: 'flex-end',
   },
 });
 

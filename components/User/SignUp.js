@@ -144,13 +144,6 @@ const styles = StyleSheet.create({
     marginRight: 120
   },
 
-  signUp: {
-    fontSize: 16,
-    marginTop: 16,
-    marginLeft: 16,
-    display: 'flex'
-  },
-
   error: {
     paddingTop: 8,
     marginBottom: 8,

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import {TextInput, HelperText, Button, Appbar, DefaultTheme} from 'react-native-paper';
-import {ScrollView, Text, StyleSheet, ToastAndroid} from 'react-native';
+import {TextInput, HelperText, Button, Appbar, DefaultTheme, Text} from 'react-native-paper';
+import {ScrollView, StyleSheet, ToastAndroid} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class Login extends Component {
@@ -33,7 +33,7 @@ class Login extends Component {
         if (response.status === 200) {
           return response.json();
         } else if (response.status === 400) {
-          ToastAndroid.show('Invalid Email or Password!', ToastAndroid.SHORT);
+          ToastAndroid.show('Invalid Email or Password', ToastAndroid.SHORT);
         } else {
           throw 'Something went wrong';
         }

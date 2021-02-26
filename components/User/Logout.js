@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import {Button, DefaultTheme} from 'react-native-paper';
-import {View, Text, StyleSheet, ToastAndroid} from 'react-native';
+import {Button, DefaultTheme, Text} from 'react-native-paper';
+import {View, StyleSheet, ToastAndroid} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class Profile extends Component {

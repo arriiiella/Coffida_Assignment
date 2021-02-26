@@ -46,8 +46,10 @@ class GetLocation extends Component {
     })
       .then((response) => {
         if (response.status === 200) {
-          return response;
-          console.log(response)
+          this.setState({ uri: reponse }, () => {
+            console.log(uri);
+          });
+          uri: response;
         } else if (response.status === 401) {
           ToastAndroid.show("You're not logged in", ToastAndroid.SHORT);
           this.props.navigation.navigate('Login');
@@ -172,7 +174,6 @@ class GetLocation extends Component {
               {this.state.locationData.location_name}
             </Title>
             <Subheading style={styles.subheading}>{this.state.locationData.location_town}</Subheading>
-            <Image source={{uri: this.state.locationData.photo_path}} />
             <FAB
             style={styles.fab}
             medium
@@ -199,7 +200,7 @@ class GetLocation extends Component {
                 <Review text={'Quality: '} rating={item.quality_rating} />
                 <Review text={'Cleanliness: '} rating={item.clenliness_rating} />
                 <Review text={''} rating={item.review_body} />
-                {/* <Image source={() => this.getPhoto(item.review_id)}/> */}
+                <Image source={{uri: 'http://10.0.2.2:3333/api/1.0.0/location/' + this.props.route.params.location_id + '/review/' + item.review_id + '/photo' }} style={styles.image}/>
                 {this.state.isLiked ? <IconButton style={styles.like} icon='thumb-up' color="#6F2A3B" size={16} accessibilityLabel='Unlike a Review' onPress={()=>this.unlike(item.review_id)} /> : <IconButton style={styles.like} icon='thumb-up-outline' color="#6F2A3B" size={16} accessibilityLabel='Like a Review' onPress={()=>this.like(item.review_id)} />}
                 <Text>{item.likes}</Text>
                 <Divider />
@@ -261,6 +262,12 @@ const styles = StyleSheet.create({
     top: 0,
     color: '#6F2A3B',
   },
+
+  image: {
+    flex: 1, 
+    width: '20%',
+    alignSelf: 'center'
+  }
 });
 
 export default GetLocation;

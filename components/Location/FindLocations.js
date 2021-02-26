@@ -6,9 +6,18 @@ import {
   ToastAndroid,
   TouchableOpacity
 } from 'react-native'
-import { TextInput, List, Text, Title, Subheading, Searchbar, ActivityIndicator, Button, IconButton } from 'react-native-paper'
+import { 
+  TextInput, 
+  List, 
+  Text, 
+  Title, 
+  Subheading, 
+  Searchbar,
+  ActivityIndicator, 
+  Button, 
+  IconButton 
+} from 'react-native-paper'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import LoggedIn from '../Helpers/LoggedIn'
 import RatingRead from '../Modules/RatingRead'
 import Filters from '../Modules/Filters'
 
@@ -50,7 +59,7 @@ class FindLocations extends Component {
 
   componentDidMount () {
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
-      LoggedIn()
+      this.loggedIn()
     })
 
     this.searchData()
@@ -60,6 +69,14 @@ class FindLocations extends Component {
   componentWillUnmount () {
     this.unsubscribe()
   }
+
+  
+  loggedIn = async () => {
+    const value = await AsyncStorage.getItem('@session_token');
+    if (value == null) {
+      this.props.navigation.navigate('Login');
+    }
+  };
 
   searchData = async () => {
     let url = 'http://10.0.2.2:3333/api/1.0.0/find?'
@@ -214,7 +231,7 @@ class FindLocations extends Component {
                   })
                 }>
                 <Text style={styles.locationDetails}>
-                  {item.location_name}
+                  {item.location_name} {item.location_id}
                 </Text>
                <RatingRead text={''} rating={parseInt(item.avg_overall_rating)} size={20} disabled={true}/>
                 {this.state.isFavourited ? <IconButton style={styles.like} icon='heart' color="#6F2A3B" size={16} accessibilityLabel='Unfavourite a location' onPress={()=>this.unfavourite(item.location_id)} /> : <IconButton style={styles.like} icon='heart-outline' color="#6F2A3B" size={16} accessibilityLabel='Favourite a location' onPress={()=>this.favourite(item.location_id)} />}
