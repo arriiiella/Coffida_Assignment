@@ -15,7 +15,7 @@ class SignUp extends Component {
     }
   }
 
-  addUser () {
+  addUser = () => {
     const toSend = {
       first_name: this.state.firstName,
       last_name: this.state.lastName,
