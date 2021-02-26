@@ -99,17 +99,17 @@ class LikedReviews extends Component {
             Liked Reviews
           </Title>
           <FlatList
-            data={this.state.listData.liked_reviews.review}
+            data={this.state.listData.liked_reviews}
             renderItem={({item}) => (
               <View style={styles.reviewContainer}>
-                <Review text={'Overall: '} rating={item.overall_rating} />
-                <Review text={'Price: '} rating={item.price_rating} />
-                <Review text={'Quality: '} rating={item.quality_rating} />
-                <Review text={'Cleanliness: '} rating={item.clenliness_rating} />
-                <Review text={''} rating={item.review_body} />
+                <Review text={'Overall: '} rating={item.review.overall_rating} />
+                <Review text={'Price: '} rating={item.review.price_rating} />
+                <Review text={'Quality: '} rating={item.review.quality_rating} />
+                <Review text={'Cleanliness: '} rating={item.review.clenliness_rating} />
+                <Review text={''} rating={item.review.review_body} />
               </View>
             )}
-            keyExtractor={(item, index) => item.review_id.toString()}
+            keyExtractor={(item, index) => item.review.review_id.toString()}
           />
         </View>
       );

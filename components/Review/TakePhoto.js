@@ -39,6 +39,7 @@ class TakePhoto extends Component {
       } else {
         ToastAndroid.show('Something went wrong', ToastAndroid.SHORT)
       }
+      this.props.navigation.navigate('Profile')
     })
     .catch((error) => {
       console.log(error)
