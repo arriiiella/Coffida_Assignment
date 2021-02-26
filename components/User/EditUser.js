@@ -17,6 +17,7 @@ class EditUser extends Component {
   }
 
   updateUser = async () => {
+    // object of the user inputted state to send off to server to edit user 
     const toSend = {
       first_name: this.state.first_name,
       last_name: this.state.last_name,

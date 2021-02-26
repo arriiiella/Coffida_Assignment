@@ -2,7 +2,10 @@ import * as React from 'react'
 import { List, TextInput } from 'react-native-paper'
 import { AirbnbRating } from '../../react-native-ratings/src'
 
+// parameters passed through will be used to set state to bring back to parent class (FindLocations) for the search endpoint
 const Filters = ({ overall, price, quality, cleanliness, searchIn, limit }) => {
+  // The state is used to determine if list should be expanded or not
+  // Set to false initially so starts off being closed
   const [expanded, setExpanded] = React.useState(false)
   const [expandedSub, setExpandedHub] = React.useState(false)
 

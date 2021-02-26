@@ -149,6 +149,7 @@ class EditReview extends Component {
   }
 
   getPhoto = async () => {
+    // gets photo to determine if there is a photo there to delete for the conditional rendering of take photo or delete photo
     const token = await AsyncStorage.getItem('@session_token');
     const location_id = this.props.route.params.item.location.location_id;
     const review_id = this.props.route.params.item.review.review_id;    
@@ -160,6 +161,7 @@ class EditReview extends Component {
     })
       .then((response) => {
         if (response.status === 200) {
+          // hasPhoto set to true if photo is found
           this.setState({ hasPhoto: true })          
         } else if (response.status === 401) {
           ToastAndroid.show("You're not logged in", ToastAndroid.SHORT);
@@ -205,6 +207,7 @@ class EditReview extends Component {
 
   
   deleteButton(location_id, review_id) {
+    // delete review then go back to profile
     this.delete(location_id, review_id);
     this.props.navigation.popToTop();
   }
@@ -226,8 +229,13 @@ class EditReview extends Component {
           <Text style={styles.header}>Update Review</Text>
           <IconButton style={styles.delete} icon='delete' color="#6F2A3B" size={24} accessibilityLabel='Delete Review' onPress={()=>this.deleteButton(this.props.route.params.item.location.location_id, this.props.route.params.item.review.review_id)}/>
         </View>
-        {this.state.hasPhoto ? <Button  icon='delete' color="#6F2A3B" size={24} accessibilityLabel='Delete Photo' onPress={()=> this.deletePhoto()}>Delete Photo</Button> : <Button icon='camera' color="#6F2A3B" size={24} accessibilityLabel='Take a Photo' onPress={()=> this.props.navigation.navigate('TakePhoto', {location_id: this.props.route.params.item.location.location_id, review_id: this.props.route.params.item.review.review_id})}> Take a Photo </Button>}
-
+        {/* conditional render delete photo button or take photo button depending if the review already has a photo */}
+        {this.state.hasPhoto ? <Button  icon='delete' color="#6F2A3B" size={24} accessibilityLabel='Delete Photo' onPress={()=> 
+          this.deletePhoto()}
+          > Delete Photo </Button> 
+          : <Button icon='camera' color="#6F2A3B" size={24} accessibilityLabel='Take a Photo' onPress={()=> 
+          this.props.navigation.navigate('TakePhoto', {location_id: this.props.route.params.item.location.location_id, review_id: this.props.route.params.item.review.review_id})}
+          > Take a Photo </Button>}
         <View style={styles.rating}>
           <Text style={styles.title}>Overall</Text>
           <AirbnbRating

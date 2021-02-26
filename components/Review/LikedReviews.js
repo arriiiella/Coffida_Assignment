@@ -79,8 +79,6 @@ class LikedReviews extends Component {
   };
 
   render() {
-    const {email, password} = this.state;
-
     const navigation = this.props.navigation;
 
     if (this.state.isLoading) {

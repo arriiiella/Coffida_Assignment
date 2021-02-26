@@ -28,6 +28,7 @@ class FaveLocations extends Component {
   }
 
   componentDidMount() {
+    // listen to check if user is logged in
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
       this.loggedIn();
     });
@@ -40,6 +41,7 @@ class FaveLocations extends Component {
   }
 
   loggedIn = async () => {
+    // checked user is logged in by looking for a session token
     const token = await AsyncStorage.getItem('@session_token');
     if (token == null) {
       this.props.navigation.navigate('Login');
@@ -68,6 +70,7 @@ class FaveLocations extends Component {
         }
       })
       .then((response) => {
+        // response has been returned so loading status has finished
         this.setState({
           isLoading: false,
           listData: response,
@@ -79,14 +82,12 @@ class FaveLocations extends Component {
   };
 
   render() {
-    const {email, password} = this.state;
-
     const navigation = this.props.navigation;
 
     if (this.state.isLoading) {
       return (
         <View style={styles.container}>
-          <Headline style={styles.header}>Loading Fave Locations...</Headline>
+          <Headline style={styles.header}>Loading Favourite Locations...</Headline>
           <ActivityIndicator
             animating={true}
             style={styles.activity}

@@ -1,7 +1,10 @@
 import React from 'react'
 import { Appbar, Menu } from 'react-native-paper'
 
+// This is called in App.js
+
 const CustomNavigationBar = ({ navigation, previous }) => {
+  // State used to determine if menu should be open or not
   const [visible, setVisible] = React.useState(false)
   const openMenu = () => setVisible(true)
   const closeMenu = () => setVisible(false)

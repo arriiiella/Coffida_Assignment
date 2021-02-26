@@ -2,6 +2,7 @@ import React from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 
 const Review = ({ text, rating }) => {
+  // Shows rating type and value
   return (
     <View style={styles.reviewContainer}>
       <Text style={styles.ratingText}>{text}</Text>

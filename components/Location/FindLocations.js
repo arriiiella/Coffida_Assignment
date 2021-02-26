@@ -234,6 +234,7 @@ class FindLocations extends Component {
                   {item.location_name} {item.location_id}
                 </Text>
                <RatingRead text={''} rating={parseInt(item.avg_overall_rating)} size={20} disabled={true}/>
+               {/* conditional rendering to determine which icon to display if location is in users favourites or not */}
                 {this.state.isFavourited ? <IconButton style={styles.like} icon='heart' color="#6F2A3B" size={16} accessibilityLabel='Unfavourite a location' onPress={()=>this.unfavourite(item.location_id)} /> : <IconButton style={styles.like} icon='heart-outline' color="#6F2A3B" size={16} accessibilityLabel='Favourite a location' onPress={()=>this.favourite(item.location_id)} />}
               </TouchableOpacity>
             )}

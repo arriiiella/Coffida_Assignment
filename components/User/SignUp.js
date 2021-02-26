@@ -55,6 +55,7 @@ class SignUp extends Component {
       return !this.state.email.includes('@')
     }
 
+    // validation to check password and confirm password match
     const validatePassword = () => {
       return (this.state.password !== this.state.confirmPassword)
     }

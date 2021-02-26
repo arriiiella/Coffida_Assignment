@@ -36,7 +36,15 @@ class GetLocation extends Component {
     this.unsubscribe();
   }
 
+    loggedIn = async () => {
+    const value = await AsyncStorage.getItem('@session_token');
+    if (value == null) {
+      this.props.navigation.navigate('Login');
+    }
+  };
+
   getPhoto = async (review_id) => {
+    //get photo endpoint using a specific location and review id
     const token = await AsyncStorage.getItem('@session_token');
     const location_id = this.props.route.params.location_id;
     return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/review/' + review_id + '/photo', {
@@ -44,25 +52,26 @@ class GetLocation extends Component {
         'X-Authorization': token,
       },
     })
-      .then((response) => {
-        if (response.status === 200) {
-          this.setState({ uri: reponse }, () => {
-            console.log(uri);
-          });
-          uri: response;
-        } else if (response.status === 401) {
-          ToastAndroid.show("You're not logged in", ToastAndroid.SHORT);
-          this.props.navigation.navigate('Login');
-        } else {
-          throw 'Something went wrong';
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    .then((response) => {
+      if (response.status === 200) {
+        this.setState({ uri: reponse }, () => {
+          console.log(uri);
+        });
+        uri: response;
+      } else if (response.status === 401) {
+        ToastAndroid.show("You're not logged in", ToastAndroid.SHORT);
+        this.props.navigation.navigate('Login');
+      } else {
+        ToastAndroid.show("Something went wrong", ToastAndroid.SHORT);
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
   }
 
   getData = async () => {
+    // get location information using location id
     const token = await AsyncStorage.getItem('@session_token');
     const location_id = this.props.route.params.location_id;
     return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id, {
@@ -84,6 +93,7 @@ class GetLocation extends Component {
       .then((response) => {
         this.setState({
           isLoading: false,
+          // locationData holds the response from API and will be used to display info
           locationData: response,
         });
       })
@@ -92,13 +102,7 @@ class GetLocation extends Component {
       });
   };
 
-  loggedIn = async () => {
-    const value = await AsyncStorage.getItem('@session_token');
-    if (value == null) {
-      this.props.navigation.navigate('Login');
-    }
-  };
-
+  // like a review
   like = async(review_id) => {
     const token = await AsyncStorage.getItem('@session_token');
     const location_id = this.props.route.params.location_id;
@@ -111,6 +115,7 @@ class GetLocation extends Component {
     })
       .then((response) => {
         if (response.status === 200) {
+          // isLike is used for the conditional rendering of the iconButton 
           this.setState({ isLiked: true })
           return response.json()
           this.getData()
@@ -125,6 +130,7 @@ class GetLocation extends Component {
       })
   }
 
+  // unlike a review
   unlike = async (review_id) => {
     const token = await AsyncStorage.getItem('@session_token');
     const location_id = this.props.route.params.location_id;
@@ -137,6 +143,7 @@ class GetLocation extends Component {
     })
       .then((response) => {
         if (response.status === 200) {
+          // isLike set to false since review has been unliked
           this.setState({ isLiked: false }, () => {
             console.log(this.state.isLiked);
           });
@@ -200,12 +207,14 @@ class GetLocation extends Component {
                 <Review text={'Quality: '} rating={item.quality_rating} />
                 <Review text={'Cleanliness: '} rating={item.clenliness_rating} />
                 <Review text={''} rating={item.review_body} />
+                {/* display review image by calling endpoint with review id and location id  */}
                 <Image source={{uri: 'http://10.0.2.2:3333/api/1.0.0/location/' + this.props.route.params.location_id + '/review/' + item.review_id + '/photo' }} style={styles.image}/>
                 {this.state.isLiked ? <IconButton style={styles.like} icon='thumb-up' color="#6F2A3B" size={16} accessibilityLabel='Unlike a Review' onPress={()=>this.unlike(item.review_id)} /> : <IconButton style={styles.like} icon='thumb-up-outline' color="#6F2A3B" size={16} accessibilityLabel='Like a Review' onPress={()=>this.like(item.review_id)} />}
                 <Text>{item.likes}</Text>
                 <Divider />
               </View>
             )}
+            // loops through each review using review id
             keyExtractor={(item, index) => item.review_id.toString()}
           />
           </View>

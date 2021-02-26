@@ -54,6 +54,7 @@ class Login extends Component {
 
     const navigation = this.props.navigation;
 
+    // check if email includes an @ sign 
     const validateEmail = () => {
       return !this.state.email.includes('@');
     };

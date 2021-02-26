@@ -36,16 +36,20 @@ class AddReview extends Component {
     const filter = ['cake', 'pastry', 'biscuits', 'tea', 'chocolate', 'pie', 'cookies']
     let i = 0;
     let found = false;
+
+    //loops through the last of 'bad' words
     while (i < filter.length)
     {
-      console.log(i)
+      // found is a boolean variable and will be set to true if the current word in filter is included in the review body
       found = this.state.body.toLowerCase().includes(filter[i].toLowerCase());
       if (found) {
+        //if found break out of loop
         break;
       } else {
         i++
       }
     }
+    // return true or false
     return found;
   }
 
@@ -90,10 +94,13 @@ class AddReview extends Component {
   };
 
   addButton() {
+    // before adding review check for profanity
     if (this.profanityFilter()) {
       ToastAndroid.show('You have used an inappropriate word!', ToastAndroid.SHORT)        
     } else {
+      // if no 'bad' words then add review
       this.addReview();
+      // go back to top of stack (Profile screen)
       this.props.navigation.popToTop();
     }
   }
@@ -102,10 +109,12 @@ class AddReview extends Component {
     const navigation = this.props.navigation;
 
     const validateRatings = () => {
+      // if any ratings are null will return true
       return (this.state.overall === null || this.state.price === null || this.state.quality === null || this.state.cleanliness === null)
     }
 
     const validateReview = () => {
+      // if review body is empty will return true
       return (this.state.body === '')
     }
 
