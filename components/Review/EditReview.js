@@ -28,6 +28,8 @@ class EditReview extends Component {
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
       this.loggedIn();
     });
+
+    this.getPhoto()
   }
 
   componentWillUnmount() {
@@ -146,13 +148,39 @@ class EditReview extends Component {
     });
   }
 
-  deletePhoto = async (location_id, review_id) => {
+  getPhoto = async () => {
     const token = await AsyncStorage.getItem('@session_token');
-    console.log(review_id, location_id)
+    const location_id = this.props.route.params.item.location.location_id;
+    const review_id = this.props.route.params.item.review.review_id;    
+    
+    return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/review/' + review_id + '/photo', {
+      headers: {
+        'X-Authorization': token,
+      },
+    })
+      .then((response) => {
+        if (response.status === 200) {
+          this.setState({ hasPhoto: true })          
+        } else if (response.status === 401) {
+          ToastAndroid.show("You're not logged in", ToastAndroid.SHORT);
+          this.props.navigation.navigate('Login');
+        } else {
+          throw 'Something went wrong';
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  deletePhoto = async () => {
+    const token = await AsyncStorage.getItem('@session_token');
+    const location_id = this.props.route.params.item.location.location_id;
+    const review_id = this.props.route.params.item.review.review_id;    
+
     return fetch('http://10.0.2.2:3333/api/1.0.0/location/' + location_id + '/review/' + review_id + '/photo/', {
       method: 'delete',
       headers: {
-        'Content-Type': 'application/json',
         'X-Authorization': token,
       },
     })
@@ -198,7 +226,7 @@ class EditReview extends Component {
           <Text style={styles.header}>Update Review</Text>
           <IconButton style={styles.delete} icon='delete' color="#6F2A3B" size={24} accessibilityLabel='Delete Review' onPress={()=>this.deleteButton(this.props.route.params.item.location.location_id, this.props.route.params.item.review.review_id)}/>
         </View>
-        {this.state.hasPhoto ? <Button  icon='delete' color="#6F2A3B" size={24} accessibilityLabel='Delete Photo' onPress={()=> this.deletePhoto(this.props.route.params.location_id, review_id, this.props.route.params.item.review.review_id)}>Delete Photo</Button> : <Button icon='camera' color="#6F2A3B" size={24} accessibilityLabel='Take a Photo' onPress={()=> this.props.navigation.navigate('TakePhoto', {location_id: this.props.route.params.item.location.location_id, review_id: this.props.route.params.item.review.review_id})}> Take a Photo </Button>}
+        {this.state.hasPhoto ? <Button  icon='delete' color="#6F2A3B" size={24} accessibilityLabel='Delete Photo' onPress={()=> this.deletePhoto()}>Delete Photo</Button> : <Button icon='camera' color="#6F2A3B" size={24} accessibilityLabel='Take a Photo' onPress={()=> this.props.navigation.navigate('TakePhoto', {location_id: this.props.route.params.item.location.location_id, review_id: this.props.route.params.item.review.review_id})}> Take a Photo </Button>}
 
         <View style={styles.rating}>
           <Text style={styles.title}>Overall</Text>
