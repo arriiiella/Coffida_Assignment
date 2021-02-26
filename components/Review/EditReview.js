@@ -198,7 +198,7 @@ class EditReview extends Component {
           <Text style={styles.header}>Update Review</Text>
           <IconButton style={styles.delete} icon='delete' color="#6F2A3B" size={24} accessibilityLabel='Delete Review' onPress={()=>this.deleteButton(this.props.route.params.item.location.location_id, this.props.route.params.item.review.review_id)}/>
         </View>
-        {this.state.hasPhoto ? <Button  icon='delete' color="#6F2A3B" size={24} accessibilityLabel='Delete Photo' onPress={()=> this.deletePhoto(this.props.route.params.location_id, review_id, this.props.route.params.item.review.review_id)}>Delete Photo</Button> : <Button icon='camera' color="#6F2A3B" size={24} accessibilityLabel='Take a Photo' onPress={()=> this.props.navigation.navigate('EditReview', {location_id: this.props.route.params.location_id, review_id: this.props.route.params.item.review.review_id})}> Take a Photo </Button>}
+        {this.state.hasPhoto ? <Button  icon='delete' color="#6F2A3B" size={24} accessibilityLabel='Delete Photo' onPress={()=> this.deletePhoto(this.props.route.params.location_id, review_id, this.props.route.params.item.review.review_id)}>Delete Photo</Button> : <Button icon='camera' color="#6F2A3B" size={24} accessibilityLabel='Take a Photo' onPress={()=> this.props.navigation.navigate('TakePhoto', {location_id: this.props.route.params.item.location.location_id, review_id: this.props.route.params.item.review.review_id})}> Take a Photo </Button>}
 
         <View style={styles.rating}>
           <Text style={styles.title}>Overall</Text>
