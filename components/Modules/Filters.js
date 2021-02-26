@@ -3,7 +3,7 @@ import { List, TextInput } from 'react-native-paper'
 import { AirbnbRating } from '../../react-native-ratings/src'
 
 // parameters passed through will be used to set state to bring back to parent class (FindLocations) for the search endpoint
-const Filters = ({ overall, price, quality, cleanliness, searchIn, limit }) => {
+const Filters = ({ overall, price, quality, cleanliness, search_in, limit }) => {
   // The state is used to determine if list should be expanded or not
   // Set to false initially so starts off being closed
   const [expanded, setExpanded] = React.useState(false)
@@ -70,8 +70,8 @@ const Filters = ({ overall, price, quality, cleanliness, searchIn, limit }) => {
           expanded={expandedSub}
           onPress={handlePressSub}
         >
-          <List.Item title='Liked Reviews' onPress={(value) => searchIn('reviewed')} />
-          <List.Item title='Favourited Locations' onPress={(value) => searchIn('favourite')} />
+          <List.Item title='Liked Reviews' onPress={(value) => search_in('reviewed')} />
+          <List.Item title='Favourited Locations' onPress={(value) => search_in('favourite')} />
         </List.Accordion>
       </List.Section>
       <List.Section>

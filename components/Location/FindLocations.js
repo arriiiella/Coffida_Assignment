@@ -148,9 +148,8 @@ class FindLocations extends Component {
   })
     .then((response) => {
       if (response.status === 200) {
-        this.setState({ isFavourited: true }, () => {
-          console.log(this.state.isFavourited);
-        });
+        this.setState({ isFavourited: true })
+        ToastAndroid.show('Location Favourited!', ToastAndroid.SHORT)
         return response.json()
       } else if (response.status === 400) {
         ToastAndroid.show('Failed Validation', ToastAndroid.SHORT)
@@ -174,9 +173,8 @@ class FindLocations extends Component {
     })
       .then((response) => {
         if (response.status === 200) {
-          this.setState({ isFavourited: false }, () => {
-            console.log(this.state.isFavourited);
-          });
+          this.setState({ isFavourited: false })
+          ToastAndroid.show('Location Unfavourited!', ToastAndroid.SHORT)
           return response.json()
         } else if (response.status === 400) {
           ToastAndroid.show('Failed Validation', ToastAndroid.SHORT)
@@ -218,7 +216,7 @@ class FindLocations extends Component {
             value={this.state.query}
           />
           <Filters overall={this.handleOverall} price={this.handlePrice} quality={this.handleQuality} cleanliness={this.handleCleanliness} search_in={this.handleSearchIn} limit={this.handleLimit}/>
-          {console.log(this.state.limit)}
+          {console.log(this.state.search_in)}
           <Button mode='contained' accessibilityLabel='Search Locations'onPress={() => this.searchData()}>Search</Button>
           <FlatList
             data={this.state.listData}
@@ -231,14 +229,14 @@ class FindLocations extends Component {
                   })
                 }>
                 <Text style={styles.locationDetails}>
-                  {item.location_name} {item.location_id}
+                  {item.location_name} 
                 </Text>
                <RatingRead text={''} rating={parseInt(item.avg_overall_rating)} size={20} disabled={true}/>
                {/* conditional rendering to determine which icon to display if location is in users favourites or not */}
-                {this.state.isFavourited ? <IconButton style={styles.like} icon='heart' color="#6F2A3B" size={16} accessibilityLabel='Unfavourite a location' onPress={()=>this.unfavourite(item.location_id)} /> : <IconButton style={styles.like} icon='heart-outline' color="#6F2A3B" size={16} accessibilityLabel='Favourite a location' onPress={()=>this.favourite(item.location_id)} />}
+                {this.state.isFavourited ? <IconButton style={styles.like} icon='heart-outline' color="#6F2A3B" size={16} accessibilityLabel='Unfavourite a location' onPress={()=>this.unfavourite(item.location_id)} /> : <IconButton style={styles.like} icon='heart-outline' color="#6F2A3B" size={16} accessibilityLabel='Favourite a location' onPress={()=>this.favourite(item.location_id)} />}
               </TouchableOpacity>
             )}
-            keyExtractor={(item, index) => item.location_id.toString()} onEndReachedThreshold={0} onEndReached={this.LoadMoreLocations}
+            keyExtractor={(item, index) => item.location_id.toString()}
           />
         </View>
       )

@@ -107,8 +107,6 @@ class Profile extends Component {
             renderItem={({item}) => (
               <View style={styles.reviewContainer}>
                 <Text>{item.location.location_name}</Text>
-                <Text>{item.review.review_id}</Text>
-                <Text>{item.location.location_id}</Text>
                 <Review text={'Overall: '} rating={item.review.overall_rating} />
                 <Review text={'Price: '} rating={item.review.price_rating} />
                 <Review text={'Quality: '} rating={item.review.quality_rating} />

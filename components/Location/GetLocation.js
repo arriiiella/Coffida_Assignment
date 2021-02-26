@@ -119,6 +119,7 @@ class GetLocation extends Component {
           this.setState({ isLiked: true })
           return response.json()
           this.getData()
+          ToastAndroid.show('Review Liked!', ToastAndroid.SHORT)
         } else if (response.status === 400) {
           ToastAndroid.show('Failed Validation', ToastAndroid.SHORT)
         } else {
@@ -144,9 +145,8 @@ class GetLocation extends Component {
       .then((response) => {
         if (response.status === 200) {
           // isLike set to false since review has been unliked
-          this.setState({ isLiked: false }, () => {
-            console.log(this.state.isLiked);
-          });
+          this.setState({ isLiked: false })
+          ToastAndroid.show('Review Unliked!', ToastAndroid.SHORT)
           return response.json()
         } else if (response.status === 400) {
           ToastAndroid.show('Failed Validation', ToastAndroid.SHORT)
@@ -209,7 +209,7 @@ class GetLocation extends Component {
                 <Review text={''} rating={item.review_body} />
                 {/* display review image by calling endpoint with review id and location id  */}
                 <Image source={{uri: 'http://10.0.2.2:3333/api/1.0.0/location/' + this.props.route.params.location_id + '/review/' + item.review_id + '/photo' }} style={styles.image}/>
-                {this.state.isLiked ? <IconButton style={styles.like} icon='thumb-up' color="#6F2A3B" size={16} accessibilityLabel='Unlike a Review' onPress={()=>this.unlike(item.review_id)} /> : <IconButton style={styles.like} icon='thumb-up-outline' color="#6F2A3B" size={16} accessibilityLabel='Like a Review' onPress={()=>this.like(item.review_id)} />}
+                {this.state.isLiked ? <IconButton style={styles.like} icon='thumb-up-outline' color="#6F2A3B" size={16} accessibilityLabel='Unlike a Review' onPress={()=>this.unlike(item.review_id)} /> : <IconButton style={styles.like} icon='thumb-up-outline' color="#6F2A3B" size={16} accessibilityLabel='Like a Review' onPress={()=>this.like(item.review_id)} />}
                 <Text>{item.likes}</Text>
                 <Divider />
               </View>

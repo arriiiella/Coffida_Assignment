@@ -49,7 +49,6 @@ class EditReview extends Component {
     let found = false;
     while (i < filter.length)
     {
-      console.log(i)
       found = this.state.body.toLowerCase().includes(filter[i].toLowerCase());
       if (found) {
         break;
