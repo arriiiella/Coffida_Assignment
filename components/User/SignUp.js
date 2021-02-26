@@ -59,6 +59,7 @@ class SignUp extends Component {
     const validatePassword = () => {
       return (this.state.password !== this.state.confirmPassword)
     }
+    
     return (
       <ScrollView
         contentContainerStyle={{ flex: 1, justifyContent: 'center' }}

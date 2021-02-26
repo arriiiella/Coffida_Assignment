@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { TextInput, Button, Subheading, Title } from 'react-native-paper'
+import { TextInput, Button, Subheading, Title, HelperText } from 'react-native-paper'
 import { ScrollView, StyleSheet, ToastAndroid } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -8,19 +8,19 @@ class EditUser extends Component {
     super(props)
 
     this.state = {
-      first_name: this.props.route.params.item.first_name,
-      last_name: this.props.route.params.item.last_name,
+      firstName: this.props.route.params.item.first_name,
+      lastName: this.props.route.params.item.last_name,
       email: this.props.route.params.item.email,
       password: '',
-      confirm_password: ''
+      confirmPassword: ''
     }
   }
 
   updateUser = async () => {
     // object of the user inputted state to send off to server to edit user 
     const toSend = {
-      first_name: this.state.first_name,
-      last_name: this.state.last_name,
+      first_name: this.state.firstName,
+      last_name: this.state.lastName,
       email: this.state.email,
       password: this.state.password
     }
@@ -63,6 +63,15 @@ class EditUser extends Component {
   render () {
     const navigation = this.props.navigation
 
+    const validateEmail = () => {
+      return !this.state.email.includes('@')
+    }
+
+    // validation to check password and confirm password match
+    const validatePassword = () => {
+      return (this.state.password !== this.state.confirmPassword)
+    }
+
     return (
       <ScrollView
         contentContainerStyle={{ flex: 1, justifyContent: 'center' }}
@@ -72,14 +81,14 @@ class EditUser extends Component {
         <TextInput
           mode='outlined'
           label='First Name...'
-          onChangeText={(first_name) => this.setState({ first_name })}
-          value={this.state.first_name}
+          onChangeText={(firstName) => this.setState({ firstName })}
+          value={this.state.firstName}
         />
         <TextInput
           mode='outlined'
           label='Last Name...'
-          onChangeText={(last_name) => this.setState({ last_name })}
-          value={this.state.last_name}
+          onChangeText={(lastName) => this.setState({ lastName })}
+          value={this.state.lastName}
         />
         <TextInput
           mode='outlined'
@@ -87,6 +96,9 @@ class EditUser extends Component {
           onChangeText={(email) => this.setState({ email })}
           value={this.state.email}
         />
+        <HelperText style={styles.error} type='error' visible={validateEmail()}>
+          Email address is invalid!
+        </HelperText>
         <Subheading>Change Password</Subheading>
         <TextInput
           mode='outlined'
@@ -98,10 +110,13 @@ class EditUser extends Component {
         <TextInput
           mode='outlined'
           label='Confirm Password...'
-          onChangeText={(confirm_password) => this.setState({ confirm_password })}
+          onChangeText={(confirmPassword) => this.setState({ confirmPassword })}
           secureTextEntry
-          value={this.state.confirm_password}
+          value={this.state.confirmPassword}
         />
+        <HelperText style={styles.error} type='error' visible={validatePassword()}>
+          Passwords don't match!
+        </HelperText>
         <Button
           style={styles.buttonContainer}
           mode='contained'
