@@ -98,7 +98,6 @@ class LikedReviews extends Component {
           <Title style={styles.header}>
             Liked Reviews
           </Title>
-          {console.log(this.state.listData.liked_reviews.review)}
           <FlatList
             data={this.state.listData.liked_reviews.review}
             renderItem={({item}) => (

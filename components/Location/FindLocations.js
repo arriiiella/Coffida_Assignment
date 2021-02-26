@@ -124,7 +124,6 @@ class FindLocations extends Component {
         } else {
           throw 'Something went wrong';
         }
-        console.log('inside block');
       })
       .then((response) => {
         this.setState({
@@ -216,7 +215,6 @@ class FindLocations extends Component {
             value={this.state.query}
           />
           <Filters overall={this.handleOverall} price={this.handlePrice} quality={this.handleQuality} cleanliness={this.handleCleanliness} search_in={this.handleSearchIn} limit={this.handleLimit}/>
-          {console.log(this.state.search_in)}
           <Button mode='contained' accessibilityLabel='Search Locations'onPress={() => this.searchData()}>Search</Button>
           <FlatList
             data={this.state.listData}

@@ -88,7 +88,6 @@ class GetLocation extends Component {
         } else {
           throw 'Something went wrong';
         }
-        console.log('inside block');
       })
       .then((response) => {
         this.setState({
